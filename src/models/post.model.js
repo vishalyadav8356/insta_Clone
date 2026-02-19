@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 
 const postSchema = new mongoose.Schema({
-    capation:{
+    caption:{
         type:String,
         default: ""
     },
