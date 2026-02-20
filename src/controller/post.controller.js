@@ -1,32 +1,13 @@
 const postModel = require("../models/post.model");
 const Imagekit = require("@imagekit/nodejs");
 const { toFile } = require("@imagekit/nodejs");
-const jwt = require("jsonwebtoken");
+
 
 const imagekit = new Imagekit({
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
 });
 
 async function createPostController(req, res) {
-  // console.log(req.body, req.file)
-
-  const token = req.cookies.token;
-
-  if (!token) {
-    res.status(401).json({
-      message: "Token not provided, Unauthorized access",
-    });
-  }
-
-  let decoded = null;
-
-  try {
-    decoded = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (err) {
-    return res.status(401).json({
-      message: "user not authorized",
-    });
-  }
 
   const file = await imagekit.files.upload({
     file: await toFile(Buffer.from(req.file.buffer), "file"),
@@ -37,7 +18,7 @@ async function createPostController(req, res) {
   const post = await postModel.create({
     caption: req.body.caption,
     imgUrl: file.url,
-    user: decoded.id,
+    user: req.user.id,
   });
 
   res.status(201).json({
@@ -47,25 +28,8 @@ async function createPostController(req, res) {
 }
 
 async function getPostController(req, res) {
-  const token = req.cookies.token;
-
-  if (!token) {
-    res.status(401).json({
-      message: "Token not provided, Unauthorized access",
-    });
-  }
-
-  let decoded = null;
-
-  try {
-    decoded = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (err) {
-    return res.status(401).json({
-      message: "user not authorized",
-    });
-  }
-
-  const userId = decoded.id;
+  
+  const userId = req.user.id
 
   const posts = await postModel.find({
     user: userId,
@@ -78,25 +42,8 @@ async function getPostController(req, res) {
 }
 
 async function getPostDetailsController(req, res) {
-  const token = req.cookies.token;
-
-  if (!token) {
-    res.status(401).json({
-      message: "Token not provided, Unauthorized access",
-    });
-  }
-  
-  let decoded = null;
-
-  try{
-    decoded = jwt.verify(token, process.env.JWT_SECRET)
-  }catch(err){
-    return res.status(401).json({
-        message: "user not authorized",
-    })
-  }
-
-  const userId = decoded.id
+ 
+  const userId = req.user.id
   const postId = req.params.postId
 
   const post = await postModel.findById(postId)
