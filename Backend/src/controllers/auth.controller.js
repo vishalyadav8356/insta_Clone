@@ -2,13 +2,17 @@ const userModel = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+//register controller
 async function registerController(req, res) {
+  //get the data from request body
   const { username, email, password, bio, profileImage } = req.body;
 
+  //check if user with the same username or email already exists in database
   const isUserAlreadyExist = await userModel.findOne({
     $or: [{ username }, { email }],
   });
 
+  //if user with the same username or email already exists return conflict error
   if (isUserAlreadyExist) {
     return res.status(409).json({
       message:
@@ -19,8 +23,10 @@ async function registerController(req, res) {
     });
   }
 
+  //hash the password before saving to database
   const hash = await bcrypt.hash(password, 10);
 
+  //create user in database with username, email, bio, profile image and hashed password
   const user = await userModel.create({
     username,
     email,
@@ -29,16 +35,20 @@ async function registerController(req, res) {
     password: hash,
   });
 
+  //  generate a token for the user and set the token in cookies
   const token = jwt.sign(
     {
       id: user._id,
     },
     process.env.JWT_SECRET,
+    // set the expiration time for the token to 1 day
     { expiresIn: "1d" },
   );
 
+  //set the token in cookies
   res.cookie("token", token);
 
+  //return success response with user data except password
   res.status(201).json({
     message: "User registered successfully",
     user: {
@@ -50,38 +60,50 @@ async function registerController(req, res) {
   });
 }
 
+
+//create post controller
 async function loginController(req, res) {
+  //get the data from request body
   const { username, email, password } = req.body;
 
+  //check if user with the given username or email exists in database
   const user = await userModel.findOne({
     $or: [{ username }, { email }],
   });
 
+
+  //if user with the given username or email does not exist return not found error
   if (!user) {
     return res.status(404).json({
       message: "User with the given username or email not found",
     });
   }
 
-
+  //compare the password with the hashed password in database
   const isPasswordValid = await bcrypt.compare(password, user.password);
 
+
+  //if password is not valid return unauthorized error
   if (!isPasswordValid) {
     return res.status(401).json({
       message: "Invalid password",
     });
   }
 
+  //generate a token for the user and set the token in cookies
   const token = jwt.sign(
     {
       id: user._id,
     },
     process.env.JWT_SECRET,
+    // set the expiration time for the token to 1 day
     { expiresIn: "1d" },
   );
 
+  //set the token in cookies
   res.cookie("token", token);
 
+  //return success response with user data except password
   res.status(200).json({
     message: "User logged in successfully",
     user: {
@@ -93,6 +115,7 @@ async function loginController(req, res) {
   });
 }
 
+//export the controllers
 module.exports = {
   registerController,
   loginController,
