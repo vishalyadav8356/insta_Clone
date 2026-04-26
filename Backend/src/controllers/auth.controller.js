@@ -39,6 +39,7 @@ async function registerController(req, res) {
   const token = jwt.sign(
     {
       id: user._id,
+      username: user.username,
     },
     process.env.JWT_SECRET,
     // set the expiration time for the token to 1 day
@@ -94,6 +95,7 @@ async function loginController(req, res) {
   const token = jwt.sign(
     {
       id: user._id,
+      username: user.username,
     },
     process.env.JWT_SECRET,
     // set the expiration time for the token to 1 day
@@ -104,7 +106,7 @@ async function loginController(req, res) {
   res.cookie("token", token);
 
   //return success response with user data except password
-  res.status(200).json({
+  res.status(200).json({   
     message: "User logged in successfully",
     user: {
       username: user.username,

@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-async function identfyUser(req, res, next){
+async function identifyUser(req, res, next){
     //check if token is provided in cookies
     const token = req.cookies.token;
 
@@ -22,12 +22,12 @@ async function identfyUser(req, res, next){
         })
     }
 
-    //set the user id in the request object for further use
-    req.userId = decoded.id;
+    // expose auth data in a consistent shape for all controllers
+     req.user = decoded
 
     //call the next middleware
     next();
 
 }
 
-module.exports = identfyUser
+module.exports = identifyUser

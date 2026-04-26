@@ -11,7 +11,6 @@ const imageKit = new ImageKit({
 
 //create post controller
 async function createPostController(req, res) {
-
   //upload image to imagekit and get the url of the uploaded image
   const file = await imageKit.files.upload({
     //convert the buffer to file and upload to imagekit
