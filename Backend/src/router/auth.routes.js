@@ -5,10 +5,14 @@ const authController = require("../controllers/auth.controller");
 // create auth router
 const authRouter = express.Router();
 
-// POST api/auth/register
+// @route POST /api/auth/register
+// @desc register a user
+// @access public
 authRouter.post("/register", authController.registerController);
 
-// POST api/auth/login
+// @route POST /api/auth/login
+// @desc login a user
+// @access public
 authRouter.post("/login", authController.loginController)
 
 
