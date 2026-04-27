@@ -11,6 +11,7 @@ const followSchema = new mongoose.Schema({
     following:{
        type:String,
     },
+    //status is required for creating a follow record because without status follow record cannot be created and it can only be accepted, pending or rejected and default value is pending because when a user sends follow request it is in pending state until the user accepts or rejects the request
     status:{
         type:String,
         default:"pending",
