@@ -14,6 +14,8 @@ const imageKit = new ImageKit({
 
 //create post controller
 async function createPostController(req, res) {
+  const userId = req.user.id;
+
   //upload image to imagekit and get the url of the uploaded image
   const file = await imageKit.files.upload({
     //convert the buffer to file and upload to imagekit
@@ -28,7 +30,7 @@ async function createPostController(req, res) {
   const post = await postModel.create({
     caption: req.body.caption,
     imgUrl: file.url,
-    userId: req.userId,
+    userId,
   });
 
   //return success response with post data
@@ -40,8 +42,7 @@ async function createPostController(req, res) {
 
 //get post controller
 async function getPostController(req, res) {
-  
-  const userId = req.userId
+  const userId = req.user.id
 
   //find posts of the user from database using user id from token and return the posts in response
   const posts = await postModel.find({
@@ -58,7 +59,7 @@ async function getPostController(req, res) {
 //  get post details controller
 async function getPostDetailsController(req, res){
   //get user id from token and post id from request params
-  const userId = req.userId
+  const userId = req.user.id
   const postId = req.params.postId;
 
     //find post in database using post id and check if the user id of the post is same as the user id from token if not return unauthorized access else return the post details in response
@@ -90,6 +91,7 @@ async function getPostDetailsController(req, res){
 
 }
 
+//like post controller
 async function likePostController(req, res){
 
   const username = req.user.username; 
@@ -116,11 +118,39 @@ async function likePostController(req, res){
 
 } 
 
+//get feed controller
+async function getFeedController(req, res){
+
+  const userId = req.user._id
+
+  const posts = await postModel.find().populate("userId").lean()
+
+  const feed = await Promise.all(
+    posts.map(async (post) => {
+      const isLiked = await likeModel.findOne({
+        user: req.user.username,    
+        post: post._id
+      })
+
+      post.isLiked = Boolean(isLiked)
+      return post
+    })
+  )
+
+
+  res.status(200).send({
+    message:"feed fetched successfully",
+    feed
+  })
+
+}
+
 
 //export the controllers
 module.exports = {
   createPostController,
   getPostController,
   getPostDetailsController,
-  likePostController
+  likePostController,
+  getFeedController
 };

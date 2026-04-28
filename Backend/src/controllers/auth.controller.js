@@ -70,7 +70,7 @@ async function loginController(req, res) {
   //check if user with the given username or email exists in database
   const user = await userModel.findOne({
     $or: [{ username }, { email }],
-  });
+  }).select("+password"); //select password field explicitly because we have set select false in user model for password field to hide the password field in response when we fetch the user data from database but we need the password field here to compare the password with the hashed password in database
 
 
   //if user with the given username or email does not exist return not found error

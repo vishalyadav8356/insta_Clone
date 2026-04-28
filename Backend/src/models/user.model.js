@@ -19,7 +19,8 @@ const userSchema = new mongoose.Schema({
     //password is required for creating a user because without password user cannot be created and it is also used for login
     password:{
         type:String,
-        required:[true,"password is required"]
+        required:[true,"password is required"],
+        select:false //select false is used to hide the password field when we fetch the user data from database because we don't want to expose the password field in the response
     },
 
     //bio is not required for creating a user but it is optional and default value is empty string
