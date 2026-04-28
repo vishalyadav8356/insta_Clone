@@ -1,21 +1,38 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+import {useAuth} from '../hooks/useAuth.js'
 
-/* register page component */
+
+{/* register page component */}
 const Register = () => {
 
-    /* state for username, email and password */
+    const {handleRegister, loading} = useAuth();
+
+    {/* state for username, email and password */}
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const navigate = useNavigate();
 
-
-    /* function to handle form submission */
-    async function handleSubmit(e) {
+    {/* function to handle form submission */}
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
+        await handleRegister(username, email, password)
+
+        navigate('/')
+
     }
+
+    if(loading){
+        return (
+            <main className="min-h-screen flex items-center justify-center bg-black">
+              <div className="w-10 h-10 border-4 border-gray-300 border-t-red-500 rounded-full animate-spin"></div>
+            </main>
+          )
+    }
+
     
 
     {/* rendering the register form */}
@@ -56,11 +73,11 @@ const Register = () => {
 
                     {/* button to submit the form */}
                     <button
-                        className='w-full px-6 py-3 rounded-2xl bg-red-500 text-white font-semibold cursor-pointer hover:bg-red-600 transition-colors duration-300'
+                        className='w-full px-6 py-3 rounded-2xl bg-red-500 text-white font-semibold cursor-pointer hover:bg-red-600 transition-transform duration-150 ease-in-out active:scale-95' 
                         type="submit">Register</button>
 
                     {/* link to navigate to login page */}
-                    <p>Already have an account? <Link to="/login" className='text-red-500'>Login</Link></p>
+                    <p>Already have an account? <Link to="/login" className='text-red-500'>Login to Account</Link></p>
                 </form>
             </div>
         </main>

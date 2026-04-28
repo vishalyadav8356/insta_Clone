@@ -14,6 +14,7 @@ export const register = async (username, email, password)=>{
             email,
             password
         })
+        return response.data
     }catch(err){
         throw err
     }
@@ -27,6 +28,7 @@ export const login = async (username, password)=>{
             username,
             password
         })
+        return response.data
     }catch(err){
         throw err
     }
