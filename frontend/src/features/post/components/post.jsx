@@ -1,0 +1,38 @@
+import React from 'react'
+import {RiHeartLine, RiHeartFill} from '@remixicon/react'
+import {RiChat4Line} from '@remixicon/react'
+import {RiShareForwardLine} from '@remixicon/react'
+import {RiBookmarkLine} from '@remixicon/react'
+
+const post = ({user, post}) => {
+    if (!post) {
+        return null
+    }
+
+    return (
+        <div className="posts w-full bg-gray-900 p-2">
+
+            <div className="user flex gap-2 items-center mb-2">
+                <img className="h-12 w-12 rounded-full aspect-square " src={post.userId.profileImage} alt={"User"} />
+                <p>{post.userId.username}</p>
+            </div>
+
+            <img src={post.imgUrl} alt={post.caption || "Post image"} />
+            <div className="flex items-center justify-between gap-4 ">
+                <div className="flex gap-4 py-2">
+                    <button>{post.isLiked ? < RiHeartFill  color="rgba(255,9,32,1)"   /> : <RiHeartLine /> } </button>
+                    <button><RiChat4Line /></button>
+                    <button><RiShareForwardLine /></button>
+                </div>
+                <div><RiBookmarkLine /></div>
+            </div>
+
+            <div className="caption">
+                <p>{post.caption}</p>
+            </div>
+
+        </div>
+    )
+}
+
+export default post

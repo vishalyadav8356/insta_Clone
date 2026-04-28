@@ -38,7 +38,7 @@ export const login = async (username, password)=>{
     {/* function to get the current logged in user */}
 export const getMe = async ()=>{
     try{    
-        const response = await api.get("/me")
+        const response = await api.get("/get-me")
         return response.data
     }catch(err){
         throw err

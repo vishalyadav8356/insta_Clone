@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import {useAuth} from '../hooks/useAuth.js'
+import {useAuth} from '../hook/useAuth.js'
 
 
 {/* register page component */}
@@ -13,15 +13,20 @@ const Register = () => {
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
     const navigate = useNavigate();
 
     {/* function to handle form submission */}
     const handleSubmit = async (e) => {
         e.preventDefault()
+        setError('')
 
-        await handleRegister(username, email, password)
-
-        navigate('/')
+        try {
+            await handleRegister(username, email, password)
+            navigate('/')
+        } catch (err) {
+            setError(err?.response?.data?.message || err?.message || 'Register failed')
+        }
 
     }
 
@@ -40,6 +45,12 @@ const Register = () => {
         <main className='min-h-screen w-full flex items-center justify-center'>
             <div className='w-fit min-w-96 flex flex-col gap-6'>
                 <h1 className='text-3xl font-bold '>Register</h1>
+
+                {error ? (
+                    <p className='rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-600'>
+                        {error}
+                    </p>
+                ) : null}
 
                 {/* form */}
                 <form className='flex flex-col gap-4' onSubmit={handleSubmit}>

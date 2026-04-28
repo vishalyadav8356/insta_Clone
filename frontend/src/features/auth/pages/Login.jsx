@@ -2,7 +2,7 @@ import React from 'react'
 {/* react router dom link for navigation between login and register page */ }
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import {useAuth} from '../hooks/useAuth.js'
+import {useAuth} from '../hook/useAuth.js'
 
 const Login = () => {
 
@@ -16,9 +16,10 @@ const Login = () => {
     {/* function to handle form submission */ }
     const handleSubmit = async (e) => {
         e.preventDefault()
-        await handleLogin(username, password)
 
-        navigate('/')
+            await handleLogin(username, password)
+            navigate('/')
+
     }
 
 if (loading) {
@@ -33,6 +34,7 @@ if (loading) {
             <div className='w-fit min-w-96 flex flex-col gap-6'>
                 <h1 className='text-3xl font-bold '>Login</h1>
 
+           
                 {/* form */}
                 <form className='flex flex-col gap-4' onSubmit={handleSubmit}   >
 
