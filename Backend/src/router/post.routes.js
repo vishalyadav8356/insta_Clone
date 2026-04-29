@@ -28,6 +28,11 @@ postRouter.get("/details/:postId", identifyUser, postController.getPostDetailsCo
 // @access private
 postRouter.post("/like/:postId", identifyUser, postController.likePostController)
 
+// @route POST /api/posts/unlike/:postId
+// @desc unlike a post
+// @access private
+postRouter.post("/unlike/:postId", identifyUser, postController.unlikePostController)
+
 // @route GET /api/posts/feed
 // @desc get feed of the user
 // @access private

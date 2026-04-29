@@ -34,7 +34,7 @@ async function createPostController(req, res) {
   });
 
   //return success response with post data
-  res.status(201).send({
+  res.status(201).json({
     message: "post created successfully",
     post,
   });
@@ -50,7 +50,7 @@ async function getPostController(req, res) {
   });
 
   //return success response with posts data
-  res.status(200).send({
+  res.status(200).json({
     message: "posts fetched successfully",
     posts,
   });
@@ -67,7 +67,7 @@ async function getPostDetailsController(req, res){
 
     //if post is not found return not found error
     if(!post){
-      return res.status(404).send({
+      return res.status(404).json({
         message:"post not found"
       })
     }
@@ -77,13 +77,13 @@ async function getPostDetailsController(req, res){
 
     //if user id of the post is not same as the user id from token return unauthorized access
     if(!isValidUser){
-      return res.status(403).send({
+      return res.status(403).json({
         message:"you are not authorized to view this post"
       })
     }
 
     //return success response with post details
-    res.status(200).send({
+    res.status(200).json({
       message:"post details fetched successfully",
       post
     })
@@ -100,7 +100,7 @@ async function likePostController(req, res){
   const post = await postModel.findById(postId)
 
   if(!post){
-    return res.status(404).send({
+    return res.status(404).json({
       message:"post not found"
     })
   }
@@ -110,13 +110,39 @@ async function likePostController(req, res){
     user: username
   })  
 
-  res.status(200).send({
+  res.status(200).json({
     message:"post liked successfully",
     like
   })
 
 
 } 
+
+//unlike post controller
+async function unlikePostController(req, res){
+
+  const username = req.user.username;
+  const postId  = req.params.postId;
+
+  const isLiked = await likeModel.findOne({
+    user: username,    
+    post: postId
+  })
+
+  if(!isLiked){
+    return res.status(400).json({
+      message:"post is not liked by the user"
+    })
+  }
+
+await likeModel.findOneAndDelete({_id: isLiked._id})
+
+return  res.status(200).json({
+  message:"post unliked successfully"
+})
+
+
+}
 
 //get feed controller
 async function getFeedController(req, res){
@@ -138,7 +164,7 @@ async function getFeedController(req, res){
   )
 
 
-  res.status(200).send({
+  res.status(200).json({
     message:"feed fetched successfully",
     feed
   })
@@ -152,5 +178,7 @@ module.exports = {
   getPostController,
   getPostDetailsController,
   likePostController,
+  unlikePostController,
   getFeedController
 };
+

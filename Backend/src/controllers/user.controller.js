@@ -8,7 +8,7 @@ async function followUserController(req, res) {
 
   //check if the user is trying to follow himself
   if (followeeUsername === followerUsername) {
-    return res.status(400).send({
+    return res.status(400).json({
       message: "you cannot follow yourself",
     });
   }
@@ -33,7 +33,7 @@ async function followUserController(req, res) {
 
   //if already accepted then user is already following
   if (existingFollow && existingFollow.status === "accepted") {
-    return res.status(400).send({
+    return res.status(400).json({
       message: `you are already following ${followeeUsername}`,
       follow: existingFollow,
     });
@@ -41,18 +41,18 @@ async function followUserController(req, res) {
 
   //if already pending then do not create duplicate request
   if (existingFollow && existingFollow.status === "pending") {
-    return res.status(200).send({
+    return res.status(200).json({
       message: `follow request already pending for ${followeeUsername}`,
       follow: existingFollow,
     });
   }
 
-  //if rejected earlier then send request again by moving back to pending
+  //if rejected earlier then json request again by moving back to pending
   if (existingFollow && existingFollow.status === "rejected") {
     existingFollow.status = "pending";
     await existingFollow.save();
 
-    return res.status(201).send({
+    return res.status(201).json({
       message: `follow request sent again to ${followeeUsername}`,
       follow: existingFollow,
     });
@@ -66,7 +66,7 @@ async function followUserController(req, res) {
   });
 
   //return success response with follow request data
-  res.status(201).send({
+  res.status(201).json({
     message: `follow request sent to ${followeeUsername}`,
     follow: followRecord,
   });
@@ -83,13 +83,13 @@ async function acceptFollowRequestController(req, res) {
   });
 
   if (!followRequest) {
-    return res.status(404).send({
+    return res.status(404).json({
       message: `follow request from ${followerUsername} not found`,
     });
   }
 
   if (followRequest.status === "accepted") {
-    return res.status(200).send({
+    return res.status(200).json({
       message: `follow request from ${followerUsername} already accepted`,
       follow: followRequest,
     });
@@ -98,7 +98,7 @@ async function acceptFollowRequestController(req, res) {
   followRequest.status = "accepted";
   await followRequest.save();
 
-  return res.status(200).send({
+  return res.status(200).json({
     message: `you accepted ${followerUsername}'s follow request`,
     follow: followRequest,
   });
@@ -115,13 +115,13 @@ async function rejectFollowRequestController(req, res) {
   });
 
   if (!followRequest) {
-    return res.status(404).send({
+    return res.status(404).json({
       message: `follow request from ${followerUsername} not found`,
     });
   }
 
   if (followRequest.status === "rejected") {
-    return res.status(200).send({
+    return res.status(200).json({
       message: `follow request from ${followerUsername} already rejected`,
       follow: followRequest,
     });
@@ -130,7 +130,7 @@ async function rejectFollowRequestController(req, res) {
   followRequest.status = "rejected";
   await followRequest.save();
 
-  return res.status(200).send({
+  return res.status(200).json({
     message: `you rejected ${followerUsername}'s follow request`,
     follow: followRequest,
   });
@@ -145,7 +145,7 @@ async function getFollowRequestsController(req, res) {
     status: "pending",
   });
 
-  return res.status(200).send({
+  return res.status(200).json({
     message: "pending follow requests fetched successfully",
     followRequests,
   });
@@ -165,7 +165,7 @@ async function unfollowUserController(req, res) {
 
   //if user is not following the user to be unfollowed return bad request error
   if (!isUserFollowing) {
-    return res.status(400).send({
+    return res.status(400).json({
       message: `you are not following ${followeeUsername}`,
     });
   }
@@ -175,7 +175,7 @@ async function unfollowUserController(req, res) {
     follower: followerUsername,
     following: followeeUsername,
   });
-  res.status(200).send({
+  res.status(200).json({
     message: `you have unfollowed ${followeeUsername}`,
   });
 }
