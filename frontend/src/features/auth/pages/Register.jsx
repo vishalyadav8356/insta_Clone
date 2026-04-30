@@ -13,22 +13,18 @@ const Register = () => {
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [error, setError] = useState('')
     const navigate = useNavigate();
 
     {/* function to handle form submission */}
     const handleSubmit = async (e) => {
         e.preventDefault()
-        setError('')
 
-        try {
             await handleRegister(username, email, password)
             navigate('/')
-        } catch (err) {
-            setError(err?.response?.data?.message || err?.message || 'Register failed')
+
+    
         }
 
-    }
 
     if(loading){
         return (
@@ -46,18 +42,14 @@ const Register = () => {
             <div className='w-fit min-w-96 flex flex-col gap-6'>
                 <h1 className='text-3xl font-bold '>Register</h1>
 
-                {error ? (
-                    <p className='rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-600'>
-                        {error}
-                    </p>
-                ) : null}
+            
 
                 {/* form */}
                 <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
 
                     {/* input for username */}
                     <input
-                        className='w-full px-6 py-3 rounded-2xl bg-gray-100 text-gray-700 outline-none placeholder-gray-500'
+                        className='w-full px-6 py-3 rounded-full bg-gray-100 text-gray-700 outline-none placeholder-gray-500'
                         type="text"
                         name="username"
                         onInput={(e) => setUsername(e.target.value)}
@@ -66,7 +58,7 @@ const Register = () => {
 
                     {/* input for email */}
                     <input
-                        className='w-full px-6 py-3 rounded-2xl bg-gray-100 text-gray-700 outline-none placeholder-gray-500'
+                        className='w-full px-6 py-3 rounded-full bg-gray-100 text-gray-700 outline-none placeholder-gray-500'
                         type="text"
                         name="email"
                         onInput={(e) => setEmail(e.target.value)}
@@ -75,7 +67,7 @@ const Register = () => {
 
                     {/* input for password */}
                     <input
-                        className='w-full px-6 py-3 rounded-2xl bg-gray-100 text-gray-700 outline-none placeholder-gray-500'
+                        className='w-full px-6 py-3 rounded-full bg-gray-100 text-gray-700 outline-none placeholder-gray-500'
                         type="password"
                         name="password"
                         onInput={(e) => setPassword(e.target.value)}
@@ -84,7 +76,7 @@ const Register = () => {
 
                     {/* button to submit the form */}
                     <button
-                        className='w-full px-6 py-3 rounded-2xl bg-red-500 text-white font-semibold cursor-pointer hover:bg-red-600 transition-transform duration-150 ease-in-out active:scale-95' 
+                        className='w-full px-6 py-3 rounded-full bg-red-500 text-white font-semibold cursor-pointer hover:bg-red-600 transition-transform duration-150 ease-in-out active:scale-95' 
                         type="submit">Register</button>
 
                     {/* link to navigate to login page */}

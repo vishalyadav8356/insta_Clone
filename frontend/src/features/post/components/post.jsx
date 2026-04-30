@@ -3,12 +3,11 @@ import {RiHeartLine, RiHeartFill} from '@remixicon/react'
 import {RiChat4Line} from '@remixicon/react'
 import {RiShareForwardLine} from '@remixicon/react'
 import {RiBookmarkLine} from '@remixicon/react'
+import { usePost } from '../hook/usePost.js'
 
-const post = ({user, post}) => {
-    if (!post) {
-        return null
-    }
+const post = ({user, post, handleLikePost, handleUnlikePost, loading}) => {
 
+  
     return (
         <div className="posts w-full bg-gray-900 p-2">
 
@@ -20,7 +19,9 @@ const post = ({user, post}) => {
             <img src={post.imgUrl} alt={post.caption || "Post image"} />
             <div className="flex items-center justify-between gap-4 ">
                 <div className="flex gap-4 py-2">
-                    <button>{post.isLiked ? < RiHeartFill  color="rgba(255,9,32,1)"   /> : <RiHeartLine /> } </button>
+                    <button
+                        onClick={()=>{post.isLiked?handleUnlikePost(post._id) : handleLikePost(post._id)}}
+                    >{post.isLiked ? < RiHeartFill  color="rgba(255,9,32,1)"   /> : <RiHeartLine /> } </button>
                     <button><RiChat4Line /></button>
                     <button><RiShareForwardLine /></button>
                 </div>

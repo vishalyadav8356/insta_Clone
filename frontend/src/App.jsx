@@ -8,6 +8,7 @@ import Register from './features/auth/pages/Register.jsx'
 import Feed from './features/post/pages/Feed.jsx'
 import { AuthProvider } from './features/auth/auth.context.jsx'
 import { PostProvider } from './features/post/post.context.jsx'
+import CreatePost from './features/post/pages/CreatePost.jsx'
 
 {/* main app component */ }
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
             <PostProvider>
                 <Routes >
                     <Route path='/' element={<Feed />} />
+                    <Route path='/create-post' element={<CreatePost/>}/>
                     <Route path='/login' element={<Login />} />
                     <Route path='/register' element={<Register />} />
                 </Routes>

@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react'
 import Post from '../components/post.jsx'
 import { usePost } from '../hook/usePost.js'
+import Nav from '../../shared/Nav.jsx'
 
 const Feed = () => {
-    const { handleGetFeed , loading, feed } = usePost()
+    const { handleGetFeed , loading, feed , handleLikePost, handleUnlikePost} = usePost()
 
     useEffect(() => {
         handleGetFeed()
@@ -19,11 +20,13 @@ const Feed = () => {
 
     return (
         <main>
-            <div className="feed flex justify-center items-start">
+            <div className="feed flex justify-center items-start py-3">
 
                 <div className="post max-w-[400px] w-full flex flex-col gap-2 ">
+
+                    <Nav/>
                     {feed.map((post) => (
-                        <Post key={post._id} user={post.user} post={post} />
+                        <Post key={post._id} user={post.user} post={post} handleLikePost={handleLikePost} handleUnlikePost={handleUnlikePost} loading={loading} />
                     ))}
 
                 </div>

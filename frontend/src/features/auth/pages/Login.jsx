@@ -40,7 +40,7 @@ if (loading) {
 
                     {/* input for username */}
                     <input
-                        className='w-full px-6 py-3 rounded-2xl bg-gray-100 text-gray-700 outline-none placeholder-gray-500'
+                        className='w-full px-6 py-3 rounded-full bg-gray-100 text-gray-700 outline-none placeholder-gray-500'
                         type="text"
                         name="username"
                         onInput={(e) => setUsername(e.target.value)}
@@ -49,7 +49,7 @@ if (loading) {
 
                     {/* input for password */}
                     <input
-                        className='w-full px-6 py-3 rounded-2xl bg-gray-100 text-gray-700 outline-none placeholder-gray-500'
+                        className='w-full px-6 py-3 rounded-full bg-gray-100 text-gray-700 outline-none placeholder-gray-500'
                         type="password"
                         name="password"
                         onInput={(e) => setPassword(e.target.value)}
@@ -58,7 +58,7 @@ if (loading) {
 
                     {/* button to submit the form */}
                     <button
-                        className='w-full px-6 py-3 rounded-2xl bg-red-500 text-white font-semibold cursor-pointer hover:bg-red-600 transition-transform duration-150 ease-in-out active:scale-95' 
+                        className='w-full px-6 py-3 rounded-full bg-red-500 text-white font-semibold cursor-pointer hover:bg-red-600 transition-transform duration-150 ease-in-out active:scale-95' 
                         type="submit">Login</button>
 
                     {/* link to navigate to register page */}
