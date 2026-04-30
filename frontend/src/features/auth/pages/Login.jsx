@@ -31,7 +31,9 @@ if (loading) {
 }
     return (
         <main className='min-h-screen w-full flex items-center justify-center'>
+            
             <div className='w-fit min-w-96 flex flex-col gap-6'>
+            
                 <h1 className='text-3xl font-bold '>Login</h1>
 
            

@@ -9,14 +9,14 @@ const post = ({user, post, handleLikePost, handleUnlikePost, loading}) => {
 
   
     return (
-        <div className="posts w-full bg-gray-900 p-2">
+        <div className="posts w-full bg-gray-900 p-2 rounded-2xl">
 
             <div className="user flex gap-2 items-center mb-2">
                 <img className="h-12 w-12 rounded-full aspect-square " src={post.userId.profileImage} alt={"User"} />
                 <p>{post.userId.username}</p>
             </div>
 
-            <img src={post.imgUrl} alt={post.caption || "Post image"} />
+            <img className="rounded-md" src={post.imgUrl} alt={ "Post image"} />
             <div className="flex items-center justify-between gap-4 ">
                 <div className="flex gap-4 py-2">
                     <button

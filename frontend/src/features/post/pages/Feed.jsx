@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import Post from '../components/post.jsx'
 import { usePost } from '../hook/usePost.js'
 import Nav from '../../shared/Nav.jsx'
+import FooterNav from '../../shared/FooterNav.jsx'
 
 const Feed = () => {
     const { handleGetFeed , loading, feed , handleLikePost, handleUnlikePost} = usePost()
@@ -19,8 +20,8 @@ const Feed = () => {
     }
 
     return (
-        <main>
-            <div className="feed flex justify-center items-start py-3">
+        <main className="bg-black min-h-screen">
+            <div className="feed flex justify-center items-start">
 
                 <div className="post max-w-[400px] w-full flex flex-col gap-2 ">
 
@@ -28,10 +29,10 @@ const Feed = () => {
                     {feed.map((post) => (
                         <Post key={post._id} user={post.user} post={post} handleLikePost={handleLikePost} handleUnlikePost={handleUnlikePost} loading={loading} />
                     ))}
-
+                 
                 </div>
-
             </div>
+            <FooterNav/>
         </main>
     )
 }

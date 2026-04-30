@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react'
 import { usePost } from '../hook/usePost.js'
 import {useNavigate} from 'react-router-dom'
+import FooterNav from '../../shared/FooterNav.jsx'
 
 const CreatePost = () => {
     const [caption, setCaption] = useState('')
@@ -28,10 +29,10 @@ const CreatePost = () => {
     }
 
     return (
-        <main className="h-screen max-w-[400px] mx-auto flex items-center justify-center">
+        <main className="min-h-screen bg-black pb-24">
 
-            <div className="w-full">
-                <h1 className="text-2xl font-bold ">Create Post</h1>
+            <div className="max-w-[400px] mx-auto pt-8">
+                <h1 className="text-2xl font-bold text-white">Create Post</h1>
 
                 <form
                     onSubmit={handleSubmit}
@@ -48,8 +49,11 @@ const CreatePost = () => {
                     <button
                         className='w-full px-6 py-3 rounded-full     bg-red-500 text-white font-semibold cursor-pointer hover:bg-red-600 transition-transform duration-150 ease-in-out active:scale-95'
                         type='submit'>Post</button>
+                        
                 </form>
+                 
             </div>
+          
         </main>
     )
 }
