@@ -152,24 +152,21 @@ async function getFeedController(req, res){
 
   const posts = await postModel.find().populate("userId").lean()
 
-  const feed = await Promise.all(
-    posts.map(async (post) => {
-      const isLiked = await likeModel.findOne({
-        user: req.user.username,    
-        post: post._id
-      })
+  const likePosts = await likeModel.find({
+    user: req.user.username
+  })
 
-      const isSaved = await savedPostModel.findOne({
-        user: req.user.username,    
-        post: post._id
-      })
+  const savedPosts = await savedPostModel.find({
+    user: req.user.username
+  })
 
-      post.isLiked = Boolean(isLiked)
-      post.isSaved = Boolean(isSaved)
-      return post
-    })
-  )
+  const likePostIds = likePosts.map((like) => like.post.toString())
+  const savedPostIds = savedPosts.map((savedPost) => savedPost.post.toString())
 
+  const feed = posts.map((post)=>({  ...post,
+    isLiked: likePostIds.includes(post._id.toString()),
+    isSaved: savedPostIds.includes(post._id.toString())
+  }))
 
   res.status(200).json({
     message:"feed fetched successfully",
