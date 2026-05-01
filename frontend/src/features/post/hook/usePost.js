@@ -1,69 +1,79 @@
-import { getFeed, createPost, likePost, unlikePost, savePost,  unSavePost } from "../services/post.api.js"
-import { useContext, useEffect } from "react"
-import { PostContext } from "../post.context.jsx"
+import { getFeed, createPost, likePost, unlikePost, savePost, unSavePost} from "../services/post.api.js";
+import { useContext, useEffect } from "react";
+import { PostContext } from "../post.context.jsx";
 
-export const usePost = () =>{
-    
-    const context = useContext(PostContext)
+export const usePost = () => {
+  const context = useContext(PostContext);
 
-    const {loading , setLoading, post, setPost, feed, setFeed} = context
+  const { loading, setLoading, post, setPost, feed, setFeed } = context;
 
-    const handleGetFeed = async ()=>{
-        setLoading (true)
-        const response = await getFeed()
-        setFeed(response.feed.reverse()) // reverse to show latest posts first
-        setLoading(false)
-    }
+  const handleGetFeed = async () => {
+    setLoading(true);
+    const response = await getFeed();
+    setFeed(response.feed.reverse()); // reverse to show latest posts first
+    setLoading(false);
+  };
 
-    const handleCreatePost = async (caption, imageFile) => {
-        setLoading(true)
-        const data = await createPost(caption, imageFile)
-        setFeed([ data.post, ...feed])
-        setLoading(false)
-    }    
+  const handleCreatePost = async (caption, imageFile) => {
+    setLoading(true);
+    const data = await createPost(caption, imageFile);
+    setFeed([data.post, ...feed]);
+    setLoading(false);
+  };
 
-    const handleLikePost = async (postId) => {
-        setLoading(true)
-        const data = await likePost(postId)
-        await handleGetFeed()
-        setLoading(false)
-    }
+  const handleLikePost = async (postId) => {
+    await likePost(postId);
 
-    const handleUnlikePost = async (postId) => {
-        setLoading(true)
-        const data = await unlikePost(postId)
-        await handleGetFeed()
-        setLoading(false)
-    }
+    setFeed((prev) =>
+      prev.map((post) =>
+        post._id === postId ? { ...post, isLiked: true } : post,
+      ),
+    );
+  };
 
-    const handleSavePost = async (postId) => {
-        setLoading(true)
-        const data = await savePost(postId)
-        await handleGetFeed()
-        setLoading(false)
-    }
+  const handleUnlikePost = async (postId) => {
+    await unlikePost(postId);
 
-    const handleUnsavePost = async (postId) => {
-        setLoading(true)
-        const data = await unSavePost(postId)
-        await handleGetFeed()
-        setLoading(false)
-    }
+    setFeed((prev) =>
+      prev.map((post) =>
+        post._id === postId ? { ...post, isLiked: false } : post,
+      ),
+    );
+  };
 
-    useEffect(() => {
-        handleGetFeed()
-    }, [])
+  const handleSavePost = async (postId) => {
+    await savePost(postId);
 
-    return{
-        loading,
-        post,
-        feed,
-        handleGetFeed,
-        handleCreatePost,
-        handleLikePost,
-        handleUnlikePost,
-        handleSavePost,
-        handleUnsavePost
-    }
+    setFeed((prev) =>
+      prev.map((post) =>
+        post._id === postId ? { ...post, isSaved: true } : post,
+      ),
+    );
+  };
 
-}
+  const handleUnsavePost = async (postId) => {
+    await unSavePost(postId);
+
+    setFeed((prev) =>
+      prev.map((post) =>
+        post._id === postId ? { ...post, isSaved: false } : post,
+      ),
+    );
+  };
+
+  useEffect(() => {
+    handleGetFeed();
+  }, []);
+
+  return {
+    loading,
+    post,
+    feed,
+    handleGetFeed,
+    handleCreatePost,
+    handleLikePost,
+    handleUnlikePost,
+    handleSavePost,
+    handleUnsavePost,
+  };
+};

@@ -23,7 +23,7 @@ const Feed = () => {
         <main className="bg-black min-h-screen">
             <div className="feed flex justify-center items-start">
 
-                <div className="post max-w-[400px] w-full flex flex-col gap-2 ">
+                <div className="post max-w-[400px] w-full flex flex-col gap-2 mb-20 ">
 
                     <Nav/>
                     {feed.map((post) => (

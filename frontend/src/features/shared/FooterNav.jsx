@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { RiHome2Line } from "@remixicon/react";
 import { RiSearchLine } from "@remixicon/react";
 import { RiAddLargeLine } from "@remixicon/react";
+import { RiNotification2Line } from "@remixicon/react";
 
 const FooterNav = () => {
   const location = useLocation()
@@ -24,9 +25,9 @@ const FooterNav = () => {
       icon: <RiAddLargeLine />
     },
     {
-      name: 'Likes',
-      path: '/likes',
-      icon: '❤️',
+      name: 'Notifications',
+      path: '/notifications',
+      icon: <RiNotification2Line />
     },
     {
       name: 'Profile',
@@ -36,18 +37,13 @@ const FooterNav = () => {
   ]
 
   return (
-    <footer className="fixed bottom-0 left-0 right-0 max-w-[400px] mx-auto bg-black border-t border-gray-700">
+    <footer className="fixed bottom-0 left-0 right-0 max-w-[400px] mx-auto bg-black ">
       <div className="flex items-center justify-around h-16">
         {navItems.map((item) => (
           <Link
             key={item.path}
             to={item.path}
-            className={`flex flex-col items-center justify-center h-full px-4 transition-colors duration-200 ${
-              location.pathname === item.path
-                ? 'text-white border-t-2 border-white'
-                : 'text-gray-500 hover:text-white'
-            }`}
-          >
+            className={`flex flex-col items-center justify-center h-full px-4 transition-colors duration-200`}>
             <span className="text-2xl mb-1">{item.icon}</span>
           </Link>
         ))}
