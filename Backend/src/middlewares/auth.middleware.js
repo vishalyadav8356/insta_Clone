@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const userModel = require("../models/user.model")
 
 async function identifyUser(req, res, next){
     //check if token is provided in cookies
@@ -22,9 +23,26 @@ async function identifyUser(req, res, next){
         })
     }
 
+    //find the user in database using user id from token
+    const user = await userModel.findById(decoded.id);
+
+    if(!user){
+        return res.status(404).json({
+            message:"user not found"
+        });
+    }
+
+    //  FINAL FIX (both support)
+    req.user = {
+        ...user.toObject(),
+        id: user._id
+    };
+
 
     // expose auth data in a consistent shape for all controllers
-     req.user = decoded
+    //  req.user = decoded
+
+  
 
     //call the next middleware
     next();

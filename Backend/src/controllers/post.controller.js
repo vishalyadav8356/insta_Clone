@@ -246,6 +246,28 @@ async function unSavePostController(req, res){
   })
 }
 
+//delete post controller
+async function deletePostController(req, res){
+  const userId = req.user._id
+  const postId = req.params.postId
+
+  const deletedPost = await postModel.findOneAndDelete({
+    _id: postId,
+    userId: userId
+  })
+
+  if(!deletedPost){
+    return res.status(404).json({
+      message:"post not found or you are not authorized to delete this post"
+    })
+  }
+
+  res.status(200).json({
+    message:"post deleted successfully",
+    deletedPost
+  })
+
+}
 
 //export the controllers
 module.exports = {
@@ -256,6 +278,7 @@ module.exports = {
   unlikePostController,
   getFeedController,
   savePostController,
-  unSavePostController
+  unSavePostController,
+  deletePostController
 };
 

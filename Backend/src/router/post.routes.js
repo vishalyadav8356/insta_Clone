@@ -48,5 +48,10 @@ postRouter.post("/save/:postId", identifyUser, postController.savePostController
 // @access private
 postRouter.post("/unsave/:postId", identifyUser, postController.unSavePostController)
 
+// @route DELETE /api/posts/postDelete/:postId
+// @desc delete a post
+// @access private
+postRouter.delete("/postDelete/:postId", identifyUser, postController.deletePostController)
+
 //module exports the post router
 module.exports = postRouter
