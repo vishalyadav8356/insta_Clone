@@ -3,9 +3,10 @@ import {RiHeartLine, RiHeartFill} from '@remixicon/react'
 import {RiChat4Line} from '@remixicon/react'
 import {RiShareForwardLine} from '@remixicon/react'
 import {RiBookmarkLine} from '@remixicon/react'
+import {RiBookmarkFill} from '@remixicon/react'
 import { usePost } from '../hook/usePost.js'
 
-const post = ({user, post, handleLikePost, handleUnlikePost, loading}) => {
+const post = ({user, post, handleLikePost, handleUnlikePost, handleSavePost, handleUnsavePost, loading}) => {
 
   
     return (
@@ -25,7 +26,11 @@ const post = ({user, post, handleLikePost, handleUnlikePost, loading}) => {
                     <button><RiChat4Line /></button>
                     <button><RiShareForwardLine /></button>
                 </div>
-                <div><RiBookmarkLine /></div>
+                <div>
+                    <button
+                        onClick={()=>{post.isSaved ? handleUnsavePost(post._id) : handleSavePost(post._id)}}
+                    >{post.isSaved ? <RiBookmarkFill /> : <RiBookmarkLine />}</button>
+                </div>
             </div>
 
             <div className="caption">

@@ -5,7 +5,7 @@ import Nav from '../../shared/Nav.jsx'
 import FooterNav from '../../shared/FooterNav.jsx'
 
 const Feed = () => {
-    const { handleGetFeed , loading, feed , handleLikePost, handleUnlikePost} = usePost()
+    const { handleGetFeed , loading, feed , handleLikePost, handleUnlikePost, handleSavePost, handleUnsavePost } = usePost()
 
     useEffect(() => {
         handleGetFeed()
@@ -27,7 +27,7 @@ const Feed = () => {
 
                     <Nav/>
                     {feed.map((post) => (
-                        <Post key={post._id} user={post.user} post={post} handleLikePost={handleLikePost} handleUnlikePost={handleUnlikePost} loading={loading} />
+                        <Post key={post._id} user={post.user} post={post} handleLikePost={handleLikePost} handleUnlikePost={handleUnlikePost} handleSavePost={handleSavePost} handleUnsavePost={handleUnsavePost} loading={loading} />
                     ))}
                  
                 </div>

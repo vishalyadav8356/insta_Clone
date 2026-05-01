@@ -34,3 +34,13 @@ export async function unlikePost(postId){
     const response = await api.post("/unlike/"+ postId)
     return response.data
 }    
+
+export async function savePost(postId){
+    const response = await api.post("/save/"+ postId)
+    return response.data
+}
+
+export async function unSavePost(postId){
+    const response = await api.post("/unsave/"+ postId)
+    return response.data
+}

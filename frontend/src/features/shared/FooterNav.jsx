@@ -25,13 +25,13 @@ const FooterNav = () => {
     },
     {
       name: 'Likes',
-      path: '/',
+      path: '/likes',
       icon: '❤️',
     },
     {
       name: 'Profile',
       path: '/profile',
-      icon: '👤',
+      icon: <div>👤</div>
     },
   ]
 
