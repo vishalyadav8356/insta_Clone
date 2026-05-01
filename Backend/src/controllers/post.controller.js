@@ -1,5 +1,7 @@
 const postModel = require("../models/post.model");
 const likeModel = require("../models/like.model");
+const savedPostModel = require("../models/savedPost.model");
+
 // For image upload to imagekit required
 const ImageKit = require("@imagekit/nodejs");
 const { toFile } = require("@imagekit/nodejs");
@@ -141,7 +143,6 @@ return  res.status(200).json({
   message:"post unliked successfully"
 })
 
-
 }
 
 //get feed controller
@@ -158,7 +159,13 @@ async function getFeedController(req, res){
         post: post._id
       })
 
+      const isSaved = await savedPostModel.findOne({
+        user: req.user.username,    
+        post: post._id
+      })
+
       post.isLiked = Boolean(isLiked)
+      post.isSaved = Boolean(isSaved)
       return post
     })
   )
@@ -171,6 +178,77 @@ async function getFeedController(req, res){
 
 }
 
+//save post controller
+async function savePostController(req, res){
+
+  const username = req.user.username;
+  const postId = req.params.postId
+
+  const isPostExist = await postModel.findById(postId)
+
+  if(!isPostExist){
+    return res.status(404).json({
+      message:"post not found"
+    })
+  }
+
+  const isAlreadySaved = await savedPostModel.findOne({
+    user: username,
+    post: postId
+  })
+
+  if(isAlreadySaved){
+    return res.status(400).json({
+      message:"post is already saved"
+    })
+  }
+
+  const savedPost = await savedPostModel.create({
+    user: username,
+    post: postId
+  })
+
+  res.status(201).json({
+    message:"post saved successfully",
+    savedPost
+  })
+
+} 
+
+//unsave post controller
+async function unSavePostController(req, res){
+  const username = req.user.username;
+  const postId = req.params.postId
+
+  const isPostExist = await postModel.findById(postId)
+
+  if(!isPostExist){
+    return res.status(404).json({
+      message:"post not found"
+    })
+  }
+
+  const isAlreadySaved = await savedPostModel.findOne({
+    user: username,
+    post: postId
+  })
+
+  if(!isAlreadySaved){
+    return res.status(400).json({
+      message:"post is not saved by the user"
+    })
+  }
+
+ await savedPostModel.deleteOne({
+    user: username,
+    post: postId
+  })
+
+  res.status(200).json({
+    message:"post unsaved successfully",
+  })
+}
+
 
 //export the controllers
 module.exports = {
@@ -179,6 +257,8 @@ module.exports = {
   getPostDetailsController,
   likePostController,
   unlikePostController,
-  getFeedController
+  getFeedController,
+  savePostController,
+  unSavePostController
 };
 

@@ -38,5 +38,15 @@ postRouter.post("/unlike/:postId", identifyUser, postController.unlikePostContro
 // @access private
 postRouter.get("/feed", identifyUser, postController.getFeedController)
 
+// @route POST /api/posts/save/:postId
+// @desc save a post
+// @access private
+postRouter.post("/save/:postId", identifyUser, postController.savePostController)
+
+// @route POST /api/posts/unsave/:postId
+// @desc unsave a post
+// @access private
+postRouter.post("/unsave/:postId", identifyUser, postController.unSavePostController)
+
 //module exports the post router
 module.exports = postRouter

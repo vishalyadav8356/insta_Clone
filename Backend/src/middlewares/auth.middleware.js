@@ -22,6 +22,7 @@ async function identifyUser(req, res, next){
         })
     }
 
+
     // expose auth data in a consistent shape for all controllers
      req.user = decoded
 
