@@ -4,9 +4,15 @@ import { RiHome2Line } from "@remixicon/react";
 import { RiSearchLine } from "@remixicon/react";
 import { RiAddLargeLine } from "@remixicon/react";
 import { RiNotification2Line } from "@remixicon/react";
+import { useAuth } from '../auth/hook/useAuth.js'
+
 
 const FooterNav = () => {
   const location = useLocation()
+
+  const { user } = useAuth()
+
+
 
   const navItems = [
     {
@@ -32,7 +38,17 @@ const FooterNav = () => {
     {
       name: 'Profile',
       path: '/profile',
-      icon: <div>👤</div>
+      icon: (
+        <div className="h-8 w-8 rounded-full bg-gray-500 overflow-hidden">
+         <img
+            src={user?.profileImage || 'https://ik.imagekit.io/m1knczwsx/insta-clone-posts/user.png?updatedAt=1776023078251'}
+            alt="Profile"
+            loading="lazy"
+            onError={(e) => { e.currentTarget.src = 'https://ik.imagekit.io/m1knczwsx/insta-clone-posts/user.png?updatedAt=1776023078251' }}
+            className="h-full w-full object-cover"
+          />  
+        </div>
+      ),
     },
   ]
 

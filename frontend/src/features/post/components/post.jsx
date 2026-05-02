@@ -28,9 +28,9 @@ const post = ({ user, post, handleLikePost, handleUnlikePost, handleSavePost, ha
                 </div>
 
                 {/* Right side (menu) */}
-                <button className="text-white text-xl">
+                {/* <button className="text-white text-xl">
                     <RiMore2Line />
-                </button>
+                </button> */}
 
             </div>
 

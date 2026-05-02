@@ -32,7 +32,7 @@ const CreatePost = () => {
     return (
         <main className="min-h-screen flex items-center justify-center bg-black">
 
-            <div className="w-full max-w-[400px] flex flex-col gap-4 px-4">
+            <div className="w-full max-w-[420px] flex flex-col gap-4 px-4">
 
                 {/* Header */}
                 <div className="flex items-center text-white mb-2">
