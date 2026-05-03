@@ -6,7 +6,7 @@ import {useAuth} from '../hook/useAuth.js'
 
 const Login = () => {
 
-    const {user, loading, handleLogin} = useAuth();
+    const {user, loading, handleLogin} = useAuth()
 
     {/* state for username and password */ }
     const [username, setUsername] = useState('')
@@ -19,7 +19,6 @@ const Login = () => {
 
             await handleLogin(username, password)
             navigate('/')
-
     }
 
 if (loading) {

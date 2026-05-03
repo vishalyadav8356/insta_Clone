@@ -53,7 +53,7 @@ const FooterNav = () => {
   ]
 
   return (
-    <footer className="fixed bottom-0 left-0 right-0 max-w-[400px] mx-auto bg-black ">
+    <footer className="fixed bottom-0 left-0 right-0 max-w-100 mx-auto bg-black ">
       <div className="flex items-center justify-around h-16">
         {navItems.map((item) => (
           <Link

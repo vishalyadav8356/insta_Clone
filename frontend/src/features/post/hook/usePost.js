@@ -1,4 +1,4 @@
-import { getFeed, createPost, likePost, unlikePost, savePost, unSavePost} from "../services/post.api.js";
+import { getFeed, createPost, getMyPost, likePost, unlikePost, savePost, unSavePost} from "../services/post.api.js";
 import { useContext, useEffect } from "react";
 import { PostContext } from "../post.context.jsx";
 
@@ -61,6 +61,14 @@ export const usePost = () => {
     );
   };
 
+  const handleGetPost = async (postId) => {
+    setLoading(true);
+    const response = await getMyPost();
+    setFeed(response.posts);
+    setLoading(false);
+    return response;
+  }
+
   useEffect(() => {
     handleGetFeed();
   }, []);
@@ -75,5 +83,6 @@ export const usePost = () => {
     handleUnlikePost,
     handleSavePost,
     handleUnsavePost,
+    handleGetPost
   };
 };

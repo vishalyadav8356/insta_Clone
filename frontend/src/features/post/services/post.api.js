@@ -44,3 +44,8 @@ export async function unSavePost(postId){
     const response = await api.post("/unsave/"+ postId)
     return response.data
 }
+
+export async function getMyPost(){
+    const response = await api.get("/")
+    return response.data
+}
