@@ -1,6 +1,9 @@
 const userModel = require("../models/user.model");
+const followModel = require("../models/follow.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const postModel = require("../models/post.model")
+
 
 //register controller
 async function registerController(req, res) {
@@ -123,12 +126,29 @@ async function getMeController(req, res){
   
   const user = await userModel.findById(userId)
 
+  const followersCount = await followModel.countDocuments({
+    following: user.username,
+    status: "accepted"
+  })
+
+  const followingCount = await followModel.countDocuments({
+    follower: user.username,
+    status: "accepted"
+  })
+
+  const postsCount = await postModel.countDocuments({
+    userId: user._id
+  })
+
   res.status(200).json({
     user:{
       username: user.username,
       email: user.email,
       bio: user.bio,
       profileImage: user.profileImage,
+      followersCount,
+      followingCount,
+      postsCount
     }
   })
 }
