@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '../../auth/hook/useAuth.js'
 import {usePost} from '../hook/usePost.js'
+import FooterNav from '../../shared/FooterNav.jsx';
+
 
 const Profile = () => {
 
   const {user} = useAuth();
-  const { handleGetPost } = usePost();
+  const { handleGetPost , loading } = usePost();
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
@@ -18,6 +20,15 @@ const Profile = () => {
 
     loadPosts();
   }, [handleGetPost]);
+
+      if (loading) {
+        return (
+            <main className="min-h-screen flex items-center justify-center bg-black">
+                <div className="w-10 h-10 border-4 border-gray-300 border-t-red-500 rounded-full animate-spin"></div>
+            </main>
+        )
+    }
+
 
   return (
     <main className="min-h-screen w-full max-w-100 mx-auto bg-gray-700 text-white p-4">
@@ -66,6 +77,8 @@ const Profile = () => {
             </div>)
           ))}
         </div>
+
+          <FooterNav/>
 
       </div>    
 

@@ -1,5 +1,5 @@
 import { getFeed, createPost, getMyPost, likePost, unlikePost, savePost, unSavePost} from "../services/post.api.js";
-import { useContext, useEffect } from "react";
+import { useCallback, useContext } from "react";
 import { PostContext } from "../post.context.jsx";
 
 export const usePost = () => {
@@ -7,71 +7,99 @@ export const usePost = () => {
 
   const { loading, setLoading, post, setPost, feed, setFeed } = context;
 
-  const handleGetFeed = async () => {
+  const handleGetFeed = useCallback(async () => {
     setLoading(true);
-    const response = await getFeed();
-    setFeed(response.feed.reverse()); // reverse to show latest posts first
-    setLoading(false);
-  };
+    try {
+      const response = await getFeed();
+      setFeed(response.feed.reverse()); // reverse to show latest posts first
+    } catch (error) {
+      console.error("Failed to fetch feed:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [setLoading, setFeed]);
 
-  const handleCreatePost = async (caption, imageFile) => {
+  const handleCreatePost = useCallback(async (caption, imageFile) => {
     setLoading(true);
-    const data = await createPost(caption, imageFile);
-    setFeed([data.post, ...feed]);
-    setLoading(false);
-  };
+    try {
+      const data = await createPost(caption, imageFile);
+      setFeed([data.post, ...feed]);
+    } catch (error) {
+      console.error("Failed to create post:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [setLoading, setFeed, feed]);
 
-  const handleLikePost = async (postId) => {
-    await likePost(postId);
+  const handleLikePost = useCallback(async (postId) => {
+    try {
+      await likePost(postId);
 
-    setFeed((prev) =>
-      prev.map((post) =>
-        post._id === postId ? { ...post, isLiked: true } : post,
-      ),
-    );
-  };
+      setFeed((prev) =>
+        prev.map((post) =>
+          post._id === postId ? { ...post, isLiked: true } : post,
+        ),
+      );
+    } catch (error) {
+      console.error("Failed to like post:", error);
+    }
+  }, [setFeed]);
 
-  const handleUnlikePost = async (postId) => {
-    await unlikePost(postId);
+  const handleUnlikePost = useCallback(async (postId) => {
+    try {
+      await unlikePost(postId);
 
-    setFeed((prev) =>
-      prev.map((post) =>
-        post._id === postId ? { ...post, isLiked: false } : post,
-      ),
-    );
-  };
+      setFeed((prev) =>
+        prev.map((post) =>
+          post._id === postId ? { ...post, isLiked: false } : post,
+        ),
+      );
+    } catch (error) {
+      console.error("Failed to unlike post:", error);
+    }
+  }, [setFeed]);
 
-  const handleSavePost = async (postId) => {
-    await savePost(postId);
+  const handleSavePost = useCallback(async (postId) => {
+    try {
+      await savePost(postId);
 
-    setFeed((prev) =>
-      prev.map((post) =>
-        post._id === postId ? { ...post, isSaved: true } : post,
-      ),
-    );
-  };
+      setFeed((prev) =>
+        prev.map((post) =>
+          post._id === postId ? { ...post, isSaved: true } : post,
+        ),
+      );
+    } catch (error) {
+      console.error("Failed to save post:", error);
+    }
+  }, [setFeed]);
 
-  const handleUnsavePost = async (postId) => {
-    await unSavePost(postId);
+  const handleUnsavePost = useCallback(async (postId) => {
+    try {
+      await unSavePost(postId);
 
-    setFeed((prev) =>
-      prev.map((post) =>
-        post._id === postId ? { ...post, isSaved: false } : post,
-      ),
-    );
-  };
+      setFeed((prev) =>
+        prev.map((post) =>
+          post._id === postId ? { ...post, isSaved: false } : post,
+        ),
+      );
+    } catch (error) {
+      console.error("Failed to unsave post:", error);
+    }
+  }, [setFeed]);
 
-  const handleGetPost = async (postId) => {
+  const handleGetPost = useCallback(async () => {
     setLoading(true);
-    const response = await getMyPost();
-    setFeed(response.posts);
-    setLoading(false);
-    return response;
-  }
-
-  useEffect(() => {
-    handleGetFeed();
-  }, []);
+    try {
+      const response = await getMyPost();
+      setFeed(response.posts);
+      return response;
+    } catch (error) {
+      console.error("Failed to fetch user posts:", error);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, [setLoading, setFeed]);
 
   return {
     loading,
