@@ -6,13 +6,10 @@ const savedPostModel = require("../models/savedPost.model");
 const ImageKit = require("@imagekit/nodejs");
 const { toFile } = require("@imagekit/nodejs");
 
-
-
 const imageKit = new ImageKit({
   //privatekey is required for uploading image to imagekit
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
 });
-
 
 //create post controller
 async function createPostController(req, res) {
@@ -44,7 +41,7 @@ async function createPostController(req, res) {
 
 //get post controller
 async function getPostController(req, res) {
-  const userId = req.user.id
+  const userId = req.user.id;
 
   //find posts of the user from database using user id from token and return the posts in response
   const posts = await postModel.find({
@@ -59,215 +56,227 @@ async function getPostController(req, res) {
 }
 
 //  get post details controller
-async function getPostDetailsController(req, res){
+async function getPostDetailsController(req, res) {
   //get user id from token and post id from request params
-  const userId = req.user.id
+  const userId = req.user.id;
   const postId = req.params.postId;
 
-    //find post in database using post id and check if the user id of the post is same as the user id from token if not return unauthorized access else return the post details in response
-    const post = await postModel.findById(postId);
+  //find post in database using post id and check if the user id of the post is same as the user id from token if not return unauthorized access else return the post details in response
+  const post = await postModel.findById(postId);
 
-    //if post is not found return not found error
-    if(!post){
-      return res.status(404).json({
-        message:"post not found"
-      })
-    }
+  //if post is not found return not found error
+  if (!post) {
+    return res.status(404).json({
+      message: "post not found",
+    });
+  }
 
-    //check if the user id of the post is same as the user id from token if not return unauthorized access else return the post details in response
-    const isValidUser = post.userId.toString() === userId;
+  //check if the user id of the post is same as the user id from token if not return unauthorized access else return the post details in response
+  const isValidUser = post.userId.toString() === userId;
 
-    //if user id of the post is not same as the user id from token return unauthorized access
-    if(!isValidUser){
-      return res.status(403).json({
-        message:"you are not authorized to view this post"
-      })
-    }
+  //if user id of the post is not same as the user id from token return unauthorized access
+  if (!isValidUser) {
+    return res.status(403).json({
+      message: "you are not authorized to view this post",
+    });
+  }
 
-    //return success response with post details
-    res.status(200).json({
-      message:"post details fetched successfully",
-      post
-    })
-
-
+  //return success response with post details
+  res.status(200).json({
+    message: "post details fetched successfully",
+    post,
+  });
 }
 
 //like post controller
-async function likePostController(req, res){
+async function likePostController(req, res) {
+  const username = req.user.username;
+  const postId = req.params.postId;
 
-  const username = req.user.username; 
-  const postId  = req.params.postId;
+  const post = await postModel.findById(postId);
 
-  const post = await postModel.findById(postId)
-
-  if(!post){
+  if (!post) {
     return res.status(404).json({
-      message:"post not found"
-    })
+      message: "post not found",
+    });
   }
 
   const like = await likeModel.create({
     post: postId,
-    user: username
-  })  
+    user: username,
+  });
 
   res.status(200).json({
-    message:"post liked successfully",
-    like
-  })
-
-
-} 
+    message: "post liked successfully",
+    like,
+  });
+}
 
 //unlike post controller
-async function unlikePostController(req, res){
-
+async function unlikePostController(req, res) {
   const username = req.user.username;
-  const postId  = req.params.postId;
+  const postId = req.params.postId;
 
   const isLiked = await likeModel.findOne({
-    user: username,    
-    post: postId
-  })
+    user: username,
+    post: postId,
+  });
 
-  if(!isLiked){
+  if (!isLiked) {
     return res.status(400).json({
-      message:"post is not liked by the user"
-    })
+      message: "post is not liked by the user",
+    });
   }
 
-await likeModel.findOneAndDelete({_id: isLiked._id})
+  await likeModel.findOneAndDelete({ _id: isLiked._id });
 
-return  res.status(200).json({
-  message:"post unliked successfully"
-})
-
+  return res.status(200).json({
+    message: "post unliked successfully",
+  });
 }
 
 //get feed controller
-async function getFeedController(req, res){
+async function getFeedController(req, res) {
+  const userId = req.user._id;
 
-  const userId = req.user._id
-
-  const posts = await postModel.find().populate("userId").lean()
+  const posts = await postModel.find().populate("userId").lean();
 
   const likePosts = await likeModel.find({
-    user: req.user.username
-  })
+    user: req.user.username,
+  });
 
   const savedPosts = await savedPostModel.find({
-    user: req.user.username
-  })
+    user: req.user.username,
+  });
 
-  const likePostIds = likePosts.map((like) => like.post.toString())
-  const savedPostIds = savedPosts.map((savedPost) => savedPost.post.toString())
+  const likePostIds = likePosts.map((like) => like.post.toString());
+  const savedPostIds = savedPosts.map((savedPost) => savedPost.post.toString());
 
-  const feed = posts.map((post)=>({  ...post,
+  const feed = posts.map((post) => ({
+    ...post,
     isLiked: likePostIds.includes(post._id.toString()),
-    isSaved: savedPostIds.includes(post._id.toString())
-  }))
+    isSaved: savedPostIds.includes(post._id.toString()),
+  }));
 
   res.status(200).json({
-    message:"feed fetched successfully",
-    feed
-  })
-
+    message: "feed fetched successfully",
+    feed,
+  });
 }
 
 //save post controller
-async function savePostController(req, res){
-
+async function savePostController(req, res) {
   const username = req.user.username;
-  const postId = req.params.postId
+  const postId = req.params.postId;
 
-  const isPostExist = await postModel.findById(postId)
+  const isPostExist = await postModel.findById(postId);
 
-  if(!isPostExist){
+  if (!isPostExist) {
     return res.status(404).json({
-      message:"post not found"
-    })
+      message: "post not found",
+    });
   }
 
   const isAlreadySaved = await savedPostModel.findOne({
     user: username,
-    post: postId
-  })
+    post: postId,
+  });
 
-  if(isAlreadySaved){
+  if (isAlreadySaved) {
     return res.status(400).json({
-      message:"post is already saved"
-    })
+      message: "post is already saved",
+    });
   }
 
   const savedPost = await savedPostModel.create({
     user: username,
-    post: postId
-  })
+    post: postId,
+  });
 
   res.status(201).json({
-    message:"post saved successfully",
-    savedPost
-  })
-
-} 
+    message: "post saved successfully",
+    savedPost,
+  });
+}
 
 //unsave post controller
-async function unSavePostController(req, res){
+async function unSavePostController(req, res) {
   const username = req.user.username;
-  const postId = req.params.postId
+  const postId = req.params.postId;
 
-  const isPostExist = await postModel.findById(postId)
+  const isPostExist = await postModel.findById(postId);
 
-  if(!isPostExist){
+  if (!isPostExist) {
     return res.status(404).json({
-      message:"post not found"
-    })
+      message: "post not found",
+    });
   }
 
   const isAlreadySaved = await savedPostModel.findOne({
     user: username,
-    post: postId
-  })
+    post: postId,
+  });
 
-  if(!isAlreadySaved){
+  if (!isAlreadySaved) {
     return res.status(400).json({
-      message:"post is not saved by the user"
-    })
+      message: "post is not saved by the user",
+    });
   }
 
- await savedPostModel.deleteOne({
+  await savedPostModel.deleteOne({
     user: username,
-    post: postId
-  })
+    post: postId,
+  });
 
   res.status(200).json({
-    message:"post unsaved successfully",
-  })
+    message: "post unsaved successfully",
+  });
 }
 
 //delete post controller
-async function deletePostController(req, res){
-  const userId = req.user._id
-  const postId = req.params.postId
+async function deletePostController(req, res) {
+  const userId = req.user._id;
+  const postId = req.params.postId;
 
   const deletedPost = await postModel.findOneAndDelete({
     _id: postId,
-    userId: userId
-  })
+    userId: userId,
+  });
 
-  if(!deletedPost){
+  if (!deletedPost) {
     return res.status(404).json({
-      message:"post not found or you are not authorized to delete this post"
-    })
+      message: "post not found or you are not authorized to delete this post",
+    });
   }
 
   res.status(200).json({
-    message:"post deleted successfully",
-    deletedPost
-  })
-
+    message: "post deleted successfully",
+    deletedPost,
+  });
 }
+
+//save post controller
+async function getSavedPostsController(req, res) {
+
+  const username = req.user.username;
+
+    const savedPosts = await savedPostModel.find({
+      user: username,
+    }).populate("post");
+
+    const posts = savedPosts
+      .filter((item) => item.post)
+      .map((item) => ({
+        ...item.post.toObject(),
+        isSaved: true,
+      }));
+
+    res.status(200).json({
+      message: "saved posts fetched successfully",
+      posts,
+    });
+} 
+
 
 //export the controllers
 module.exports = {
@@ -279,6 +288,6 @@ module.exports = {
   getFeedController,
   savePostController,
   unSavePostController,
-  deletePostController
+  deletePostController,
+  getSavedPostsController,
 };
-

@@ -53,5 +53,10 @@ postRouter.post("/unsave/:postId", identifyUser, postController.unSavePostContro
 // @access private
 postRouter.delete("/postDelete/:postId", identifyUser, postController.deletePostController)
 
+// @route GET /api/posts/savedPosts
+// @desc get saved posts of the user
+// @access private
+postRouter.get("/savedPosts", identifyUser, postController.getSavedPostsController)
+
 //module exports the post router
 module.exports = postRouter
