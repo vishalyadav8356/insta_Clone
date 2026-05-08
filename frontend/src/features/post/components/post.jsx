@@ -39,13 +39,16 @@ const post = ({ user, post, handleLikePost, handleUnlikePost, handleSavePost, ha
                 <div className="flex gap-4 py-2">
                     <button
                         onClick={() => { post.isLiked ? handleUnlikePost(post._id) : handleLikePost(post._id) }}
+                        className='cursor-pointer'
                     >{post.isLiked ? < RiHeartFill color="rgba(255,9,32,1)" /> : <RiHeartLine />} </button>
-                    <button><RiChat4Line /></button>
-                    <button><RiShareForwardLine /></button>
+
+                    <button className='cursor-pointer'><RiChat4Line /></button>
+                    <button className='cursor-pointer'><RiShareForwardLine /></button>
                 </div>
                 <div>
                     <button
                         onClick={() => { post.isSaved ? handleUnsavePost(post._id) : handleSavePost(post._id) }}
+                        className='cursor-pointer'
                     >{post.isSaved ? <RiBookmarkFill /> : <RiBookmarkLine />}</button>
                 </div>
             </div>

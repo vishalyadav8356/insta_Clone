@@ -59,7 +59,7 @@ const FooterNav = () => {
           <Link
             key={item.path}
             to={item.path}
-            className={`flex flex-col items-center justify-center h-full px-4 transition-colors duration-200`}>
+            className={`flex flex-col items-center justify-center h-full px-4 transition-colors duration-200 `}>
             <span className="text-2xl mb-1">{item.icon}</span>
           </Link>
         ))}

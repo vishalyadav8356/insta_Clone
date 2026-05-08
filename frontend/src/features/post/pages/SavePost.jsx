@@ -57,7 +57,9 @@ const SavePost = () => {
                             </div>
                         ))
                     ) : (
-                        <p className="text-gray-400 text-center">No saved posts to display.</p>
+                        <div className="w-full min-h-[80vh] flex items-center justify-center col-span-3">
+                            <p className="text-white text-center text-xl">No saved posts to display.</p>
+                        </div>
                     )}
                 </div>
 

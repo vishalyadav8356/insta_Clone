@@ -48,3 +48,17 @@ export async function showSavedPosts() {
   const response = await api.get("/savedPosts");
   return response.data;
 }
+
+export async function editProfile(bio, profileImage) {
+  const formData = new FormData();
+  formData.append("bio", bio);
+  if (profileImage) {
+    formData.append(
+      "profileImage",
+      profileImage
+    );
+  }
+
+  const response = await api.post("/editProfile", formData);
+  return response.data;
+}

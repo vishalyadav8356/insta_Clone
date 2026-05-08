@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 const Profile = () => {
 
   const {user} = useAuth();
-  const { handleGetPost , loading, handleShowSavedPosts } = usePost();
+  const { handleGetPost , loading, handleShowSavedPosts  } = usePost();
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
@@ -29,6 +29,7 @@ const Profile = () => {
     await handleShowSavedPosts();
     navigate('/saved-posts');
   }
+
 
       if (loading) {
         return (
@@ -58,24 +59,26 @@ const Profile = () => {
         <div>
         <div className="">
           <h1 className="text-xl font-bold">{user?.username || "Username"}</h1>
-          <p className="text-gray-300 text-sm">{user?.bio || "Bio goes here..."}</p>
+          <p className="text-gray-300 text-sm mt-1">{user?.bio || "Bio goes here..."}</p>
         </div>
-        <div className=" flex gap-2 mt-2 ">
+        <div className=" flex gap-4 mt-1 ">
             <p>{user?.postsCount || 0} posts</p>
             <p>{user?.followersCount || 0} followers</p>    
             <p>{user?.followingCount || 0} following</p>
         </div>
         <div className=" flex gap-2 mt-2 ">
-          <button className="px-4 py-1 bg-blue-500 rounded">Edit Profile</button>
+          <button 
+            onClick={() => navigate("/editProfile")}
+          className="px-4 py-1 bg-gray-500 rounded cursor-pointer hover:bg-gray-600">Edit Profile</button>
           <button
             onClick={handleNavigateToSavedPosts}
-          className="px-4 py-1 bg-gray-500 rounded">Save posts</button>
+          className="px-4 py-1 bg-gray-500 rounded cursor-pointer hover:bg-gray-600">Save posts</button>
         </div>
         </div>
 
       </div>
 
-      <div className="mt-6 border-t border-gray-600 pt-4">
+      <div className="mt-4 border-t border-gray-600 pt-4">
         
         <div className="grid grid-cols-3 gap-2">
           {posts.map((post) => (

@@ -6,6 +6,7 @@ import FooterNav from '../../shared/FooterNav.jsx'
 
 const CreatePost = () => {
     const [caption, setCaption] = useState('')
+    const [fileName, setFileName] = useState('')
     const postImageInputFileRef = useRef(null)
 
     const { handleCreatePost, loading } = usePost()
@@ -35,17 +36,16 @@ const CreatePost = () => {
             <div className="w-full max-w-[420px] flex flex-col gap-4 px-4">
 
                 {/* Header */}
-                <div className="flex items-center text-white mb-2">
-                    <button
-                        onClick={() => navigate("/")}
-                        className="text-2xl"
-                    >
-                        <RiArrowLeftFill />
-                    </button>
-                    <h1 className="flex-1 text-center text-2xl font-bold">
-                        Create Post
-                    </h1>
-                </div>
+             <div className="w-full relative flex items-center justify-center">
+                <button
+                    onClick={() => navigate("/")}
+                    className="text-2xl text-white absolute top-3 left-4"
+                >
+                    <RiArrowLeftFill />
+                </button>
+
+                <h1 className="text-white text-2xl font-bold text-center mt-2">Saved Posts</h1>
+            </div>
 
                 {/* Form */}
                 <form
@@ -53,10 +53,11 @@ const CreatePost = () => {
                     className="flex flex-col gap-3 mt-2"
                 >
                     <label
-                        className="w-full px-6 py-3 rounded-full bg-gray-100 text-gray-700 font-semibold cursor-pointer"
+                        className="w-full px-6 py-3 rounded-full bg-gray-100 text-gray-700 font-semibold cursor-pointer flex items-center justify-between"
                         htmlFor="postImage"
                     >
-                        Select Image
+                    
+                        <span className="text-sm text-gray-500">{fileName || 'Select Image'}</span>
                     </label>
 
                     <input
@@ -64,6 +65,10 @@ const CreatePost = () => {
                         type="file"
                         id="postImage"
                         hidden
+                        onChange={() => {
+                            const f = postImageInputFileRef.current?.files?.[0];
+                            setFileName(f ? f.name : '');
+                        }}
                     />
 
                     <input

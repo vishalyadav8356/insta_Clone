@@ -11,6 +11,7 @@ import { PostProvider } from './features/post/post.context.jsx'
 import CreatePost from './features/post/pages/CreatePost.jsx'
 import Profile from './features/post/pages/Profile.jsx'
 import SavePost from './features/post/pages/SavePost.jsx'
+import EditProfile from './features/post/components/EditProfile.jsx'
 
 {/* main app component */ }
 const App = () => {
@@ -24,6 +25,7 @@ const App = () => {
                     <Route path='/create-post' element={<CreatePost/>}/>
                     <Route path='/profile'element={<Profile/>} />
                     <Route path='/saved-posts' element={<SavePost/>} />
+                    <Route path='/editProfile' element={<EditProfile/>} />
                 </Routes>
             </PostProvider>
         </AuthProvider>

@@ -1,11 +1,14 @@
-import { getFeed, createPost, getMyPost, likePost, unlikePost, savePost, unSavePost, showSavedPosts} from "../services/post.api.js";
+import { getFeed, createPost, getMyPost, likePost, unlikePost, savePost, unSavePost, showSavedPosts, editProfile} from "../services/post.api.js";
 import { useCallback, useContext } from "react";
+import { AuthContext } from "../../auth/auth.context.jsx";
 import { PostContext } from "../post.context.jsx";
 
 export const usePost = () => {
   const context = useContext(PostContext);
+  const authContext = useContext(AuthContext);
 
-  const { loading, setLoading, post, setPost, feed, setFeed } = context;
+  const { loading, setLoading, post, feed, setFeed } = context;
+  const { setUser } = authContext;
 
   const handleGetFeed = useCallback(async () => {
     setLoading(true);
@@ -118,6 +121,20 @@ export const usePost = () => {
     }
   }, [setLoading, setFeed]);
 
+  const handleEditProfile = useCallback(async(bio, profileImage) => {
+    setLoading(true);
+    try {
+      const response = await editProfile(bio, profileImage);  
+      if (response?.user) {
+        setUser(response.user);
+      }
+    } catch (error) {
+      console.error("Failed to edit profile:", error);
+    } finally {
+      setLoading(false);
+    }   
+  }, [setLoading, setUser]);
+
 
   return {
     loading,
@@ -130,6 +147,7 @@ export const usePost = () => {
     handleSavePost,
     handleUnsavePost,
     handleGetPost,
-    handleShowSavedPosts
+    handleShowSavedPosts,
+    handleEditProfile
   };
 };
