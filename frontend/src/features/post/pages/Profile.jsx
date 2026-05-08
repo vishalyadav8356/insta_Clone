@@ -2,15 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { useAuth } from '../../auth/hook/useAuth.js'
 import {usePost} from '../hook/usePost.js'
 import FooterNav from '../../shared/FooterNav.jsx';
+import { useNavigate } from 'react-router-dom';
 
 
 const Profile = () => {
 
   const {user} = useAuth();
-  const { handleGetPost , loading } = usePost();
+  const { handleGetPost , loading, handleShowSavedPosts } = usePost();
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
+
     const loadPosts = async () => {
       const response = await handleGetPost();
       if (response?.posts) {
@@ -20,6 +22,13 @@ const Profile = () => {
 
     loadPosts();
   }, [handleGetPost]);
+
+  const navigate = useNavigate();
+
+  const handleNavigateToSavedPosts = async () => {
+    await handleShowSavedPosts();
+    navigate('/saved-posts');
+  }
 
       if (loading) {
         return (
@@ -31,13 +40,13 @@ const Profile = () => {
 
 
   return (
-    <main className="min-h-screen w-full max-w-100 mx-auto bg-gray-700 text-white p-4">
+    <main className="min-h-screen w-full max-w-100 mx-auto bg-black text-white p-4 mb-15">
 
       {/* Top Section */}
       <div className="flex items-center gap-4 ">
 
         {/* Profile Image */}
-        <div className="h-24 w-24 bg-gray-300 rounded-full overflow-hidden">
+        <div className="h-24 w-24 bg-gray-300 rounded-full overflow-hidden ">
           <img
             src={user?.profileImage}
             alt="Profile"
@@ -58,7 +67,9 @@ const Profile = () => {
         </div>
         <div className=" flex gap-2 mt-2 ">
           <button className="px-4 py-1 bg-blue-500 rounded">Edit Profile</button>
-          <button className="px-4 py-1 bg-gray-500 rounded">Save posts</button>
+          <button
+            onClick={handleNavigateToSavedPosts}
+          className="px-4 py-1 bg-gray-500 rounded">Save posts</button>
         </div>
         </div>
 

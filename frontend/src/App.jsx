@@ -10,6 +10,7 @@ import { AuthProvider } from './features/auth/auth.context.jsx'
 import { PostProvider } from './features/post/post.context.jsx'
 import CreatePost from './features/post/pages/CreatePost.jsx'
 import Profile from './features/post/pages/Profile.jsx'
+import SavePost from './features/post/pages/SavePost.jsx'
 
 {/* main app component */ }
 const App = () => {
@@ -22,6 +23,7 @@ const App = () => {
                     <Route path='/register' element={<Register />} />
                     <Route path='/create-post' element={<CreatePost/>}/>
                     <Route path='/profile'element={<Profile/>} />
+                    <Route path='/saved-posts' element={<SavePost/>} />
                 </Routes>
             </PostProvider>
         </AuthProvider>

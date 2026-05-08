@@ -43,3 +43,8 @@ export async function getMyPost() {
   const response = await api.get("/");
   return response.data;
 }
+
+export async function showSavedPosts() {
+  const response = await api.get("/savedPosts");
+  return response.data;
+}

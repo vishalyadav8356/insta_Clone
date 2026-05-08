@@ -1,4 +1,4 @@
-import { getFeed, createPost, getMyPost, likePost, unlikePost, savePost, unSavePost} from "../services/post.api.js";
+import { getFeed, createPost, getMyPost, likePost, unlikePost, savePost, unSavePost, showSavedPosts} from "../services/post.api.js";
 import { useCallback, useContext } from "react";
 import { PostContext } from "../post.context.jsx";
 
@@ -101,6 +101,24 @@ export const usePost = () => {
     }
   }, [setLoading, setFeed]);
 
+  const handleShowSavedPosts = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await showSavedPosts();
+      // normalize backend response: could be { savedPosts: [...] } or { posts: [...] }
+      const list = response?.savedPosts ?? response?.posts ?? [];
+      setFeed(Array.isArray(list) ? list : []);
+      return Array.isArray(list) ? list : [];
+    } catch (error) {
+      console.error("Failed to fetch saved posts:", error);
+      setFeed([]);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, [setLoading, setFeed]);
+
+
   return {
     loading,
     post,
@@ -111,6 +129,7 @@ export const usePost = () => {
     handleUnlikePost,
     handleSavePost,
     handleUnsavePost,
-    handleGetPost
+    handleGetPost,
+    handleShowSavedPosts
   };
 };
