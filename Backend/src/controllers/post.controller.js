@@ -258,83 +258,80 @@ async function deletePostController(req, res) {
 
 //save post controller
 async function getSavedPostsController(req, res) {
-
   const username = req.user.username;
 
-    const savedPosts = await savedPostModel.find({
+  const savedPosts = await savedPostModel
+    .find({
       user: username,
-    }).populate("post");
+    })
+    .populate("post");
 
-    const posts = savedPosts
-      .filter((item) => item.post)
-      .map((item) => ({
-        ...item.post.toObject(),
-        isSaved: true,
-      }));
+  const posts = savedPosts
+    .filter((item) => item.post)
+    .map((item) => ({
+      ...item.post.toObject(),
+      isSaved: true,
+    }));
 
-    res.status(200).json({
-      message: "saved posts fetched successfully",
-      posts,
-    });
-} 
-
+  res.status(200).json({
+    message: "saved posts fetched successfully",
+    posts,
+  });
+}
 
 //edit profile controller and bio update controller
 async function editProfileController(req, res) {
-    const userId = req.user.id;
+  const userId = req.user.id;
 
-    // find user
-    const user = await userModel.findById(userId);
+  // find user
+  const user = await userModel.findById(userId);
 
-    // if user not found return error
-    if (!user) {
-      return res.status(404).json({
-        message: "user not found",
-      });
+  // if user not found return error
+  if (!user) {
+    return res.status(404).json({
+      message: "user not found",
+    });
+  }
+
+  // bio update
+  if (req.body.bio !== undefined) {
+    user.bio = req.body.bio;
+  }
+
+  // profile image update
+  if (req.file) {
+    // delete old image from imagekit
+    if (user.profileImageFileId) {
+      await imageKit.files.delete(user.profileImageFileId);
     }
 
-    // bio update
-    if (req.body.bio !== undefined) {
-      user.bio = req.body.bio;
-    }
+    // upload new image
+    const file = await imageKit.files.upload({
+      file: await toFile(Buffer.from(req.file.buffer), "file"),
 
-    // profile image update
-    if (req.file) {
+      fileName: `${Date.now()}-profile.jpg`,
 
-      // delete old image from imagekit
-      if (user.profileImageFileId) {
-        await imageKit.files.delete(user.profileImageFileId);
-      }
-      
-      // upload new image
-      const file = await imageKit.files.upload({
+      folder: "/insta-clone-profile",
+    });
 
-        file: await toFile(
-          Buffer.from(req.file.buffer),
-          "file"
-        ),
-
-        fileName: Date.now() + "-profile.jpg",
-
-        folder: "/insta-clone-profile",
-      });
-
-      // save new image url
-      user.profileImage = file.url;
-
-      // save new fileId
-      user.profileImageFileId = file.fileId;
-    }
-
-    // save updated user
-    await user.save();
+    const updateUser = await userModel.findByIdAndUpdate(
+      userId,
+      {
+        profileImage: file.url,
+        profileImageFileId: file.fileId,
+        bio: user.bio,
+      },
+      {
+         returnDocument: "after"
+      },
+    );
 
     res.status(200).json({
       message: "profile updated successfully",
-      user,
+      user: updateUser,
     });
-  } 
-  
+  }
+}
 
 //export the controllers
 module.exports = {
