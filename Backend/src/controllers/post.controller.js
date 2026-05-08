@@ -1,6 +1,7 @@
 const postModel = require("../models/post.model");
 const likeModel = require("../models/like.model");
 const savedPostModel = require("../models/savedPost.model");
+const userModel = require("../models/user.model");
 
 // For image upload to imagekit required
 const ImageKit = require("@imagekit/nodejs");
@@ -278,6 +279,63 @@ async function getSavedPostsController(req, res) {
 } 
 
 
+//edit profile controller and bio update controller
+async function editProfileController(req, res) {
+    const userId = req.user.id;
+
+    // find user
+    const user = await userModel.findById(userId);
+
+    // if user not found return error
+    if (!user) {
+      return res.status(404).json({
+        message: "user not found",
+      });
+    }
+
+    // bio update
+    if (req.body.bio !== undefined) {
+      user.bio = req.body.bio;
+    }
+
+    // profile image update
+    if (req.file) {
+
+      // delete old image from imagekit
+      if (user.profileImageFileId) {
+        await imageKit.files.delete(user.profileImageFileId);
+      }
+      
+      // upload new image
+      const file = await imageKit.files.upload({
+
+        file: await toFile(
+          Buffer.from(req.file.buffer),
+          "file"
+        ),
+
+        fileName: Date.now() + "-profile.jpg",
+
+        folder: "/insta-clone-profile",
+      });
+
+      // save new image url
+      user.profileImage = file.url;
+
+      // save new fileId
+      user.profileImageFileId = file.fileId;
+    }
+
+    // save updated user
+    await user.save();
+
+    res.status(200).json({
+      message: "profile updated successfully",
+      user,
+    });
+  } 
+  
+
 //export the controllers
 module.exports = {
   createPostController,
@@ -290,4 +348,5 @@ module.exports = {
   unSavePostController,
   deletePostController,
   getSavedPostsController,
+  editProfileController,
 };

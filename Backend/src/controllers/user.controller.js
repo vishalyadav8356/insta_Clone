@@ -181,6 +181,11 @@ async function unfollowUserController(req, res) {
 }
 
 
+//controller for search users by username
+// async function searchUsersController(req, res) {
+
+// }
+
 
 module.exports = {
   followUserController,

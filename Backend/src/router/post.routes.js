@@ -58,5 +58,11 @@ postRouter.delete("/postDelete/:postId", identifyUser, postController.deletePost
 // @access private
 postRouter.get("/savedPosts", identifyUser, postController.getSavedPostsController)
 
+// @route POST /api/posts/editProfile
+// @desc edit user profile
+// @access private
+postRouter.post('/editProfile', upload.single('profileImage'), identifyUser, postController.editProfileController)
+
+
 //module exports the post router
 module.exports = postRouter

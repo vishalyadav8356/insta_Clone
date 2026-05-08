@@ -45,8 +45,8 @@ async function registerController(req, res) {
       username: user.username,
     },
     process.env.JWT_SECRET,
-    // set the expiration time for the token to 1 day
-    { expiresIn: "1d" },
+    // set the expiration time for the token to 20 days
+    { expiresIn: "20d" },
   );
 
   //set the token in cookies
@@ -101,8 +101,8 @@ async function loginController(req, res) {
       username: user.username,
     },
     process.env.JWT_SECRET,
-    // set the expiration time for the token to 1 day
-    { expiresIn: "1d" },
+    // set the expiration time for the token to 20 days
+    { expiresIn: "20d" },
   );
 
   //set the token in cookies
