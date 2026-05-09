@@ -2,6 +2,7 @@ const postModel = require("../models/post.model");
 const likeModel = require("../models/like.model");
 const savedPostModel = require("../models/savedPost.model");
 const userModel = require("../models/user.model");
+const followModel = require("../models/follow.model");
 
 // For image upload to imagekit required
 const ImageKit = require("@imagekit/nodejs");
@@ -284,7 +285,7 @@ async function editProfileController(req, res) {
   const userId = req.user.id;
 
   // find user
-  const user = await userModel.findById(userId);
+  let user = await userModel.findById(userId);
 
   // if user not found return error
   if (!user) {
@@ -293,44 +294,68 @@ async function editProfileController(req, res) {
     });
   }
 
-  // bio update
-  if (req.body.bio !== undefined) {
-    user.bio = req.body.bio;
-  }
-
-  // profile image update
+  // If a new profile image is provided, handle upload and remove old image
   if (req.file) {
-    // delete old image from imagekit
     if (user.profileImageFileId) {
       await imageKit.files.delete(user.profileImageFileId);
     }
 
-    // upload new image
     const file = await imageKit.files.upload({
       file: await toFile(Buffer.from(req.file.buffer), "file"),
-
       fileName: `${Date.now()}-profile.jpg`,
-
       folder: "/insta-clone-profile",
     });
 
-    const updateUser = await userModel.findByIdAndUpdate(
+    user = await userModel.findByIdAndUpdate(
       userId,
       {
         profileImage: file.url,
         profileImageFileId: file.fileId,
-        bio: user.bio,
+        bio: req.body.bio !== undefined ? req.body.bio : user.bio,
       },
       {
-         returnDocument: "after"
-      },
+        returnDocument: "after",
+      }
     );
-
-    res.status(200).json({
-      message: "profile updated successfully",
-      user: updateUser,
-    });
+  } else if (req.body.bio !== undefined) {
+    // only bio update
+    user = await userModel.findByIdAndUpdate(
+      userId,
+      { bio: req.body.bio },
+      { returnDocument: "after" }
+    );
+  } else {
+    // nothing changed, refresh user
+    user = await userModel.findById(userId);
   }
+
+  // compute follower/following/posts counts to match `getMe` response
+  const followersCount = await followModel.countDocuments({
+    following: user.username,
+    status: "accepted",
+  });
+
+  const followingCount = await followModel.countDocuments({
+    follower: user.username,
+    status: "accepted",
+  });
+
+  const postsCount = await postModel.countDocuments({
+    userId: user._id,
+  });
+
+  res.status(200).json({
+    message: "profile updated successfully",
+    user: {
+      username: user.username,
+      email: user.email,
+      bio: user.bio,
+      profileImage: user.profileImage,
+      followersCount,
+      followingCount,
+      postsCount,
+    },
+  });
 }
 
 //export the controllers
