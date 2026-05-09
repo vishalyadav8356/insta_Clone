@@ -11,6 +11,8 @@ const EditProfile = () => {
     const navigate = useNavigate();
 
 
+    const BIO_MAX = 50;
+    
     const [bio, setBio] = useState("");
     const [fileName, setFileName] = useState("");
     const  profileImage = useRef(null);
@@ -70,10 +72,13 @@ const EditProfile = () => {
                 {/* Bio input */}
                 <input
                     value={bio}
+                    maxLength={BIO_MAX}
                     onChange={(e) => setBio(e.target.value)}
                     className="w-full px-6 py-3 rounded-full bg-gray-100 text-gray-700 outline-none"
                     type="text"
                     placeholder="Write a Bio..."/>
+
+                <div className="text-xs text-gray-400 text-right">{bio.length}/{BIO_MAX}</div>
 
                 {/* Save changes button */}
                 <button

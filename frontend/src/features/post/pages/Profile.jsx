@@ -56,15 +56,15 @@ const Profile = () => {
         </div>
 
         {/* Username + Bio */}
-        <div>
-        <div className="">
-          <h1 className="text-xl font-bold">{user?.username || "Username"}</h1>
-          <p className="text-gray-300 text-sm mt-1">{user?.bio || "Bio goes here..."}</p>
+        <div className="flex-1 min-w-0">
+        <div className="flex flex-col min-w-0">
+          <h1 className="text-xl font-bold truncate">{user?.username || "Username"}</h1>
+          <p className="text-gray-300 text-sm mt-1 wrap-words overflow-hidden">{user?.bio || "Bio goes here..."}</p>
         </div>
-        <div className=" flex gap-4 mt-1 ">
-            <p>{user?.postsCount || 0} posts</p>
-            <p>{user?.followersCount || 0} followers</p>    
-            <p>{user?.followingCount || 0} following</p>
+        <div className="flex flex-wrap gap-4 mt-1 text-sm">
+            <p className="truncate">{user?.postsCount || 0} posts</p>
+            <p className="truncate">{user?.followersCount || 0} followers</p>    
+            <p className="truncate">{user?.followingCount || 0} following</p>
         </div>
         <div className=" flex gap-2 mt-2 ">
           <button 

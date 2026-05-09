@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { RiHeartLine, RiHeartFill } from '@remixicon/react'
 import { RiChat4Line } from '@remixicon/react'
 import { RiShareForwardLine } from '@remixicon/react'
@@ -7,11 +7,19 @@ import { RiBookmarkFill } from '@remixicon/react'
 import { RiMore2Line } from '@remixicon/react'
 import { usePost } from '../hook/usePost.js'
 
+const CAPTION_LIMIT = 100;
+
 const post = ({ user, post, handleLikePost, handleUnlikePost, handleSavePost, handleUnsavePost, loading }) => {
 
 
+    const [isExpanded, setIsExpanded] = useState(false);
+    
+    const wordCount = post.caption && post.caption.trim() !== '' ? post.caption.trim().split(/\s+/).length : 0;
+    const isCaptionLong = post.caption && post.caption.length > CAPTION_LIMIT;
+    const displayCaption = isExpanded ? post.caption : post.caption?.slice(0, CAPTION_LIMIT);
+
     return (
-        <div className="posts w-full bg-gray-900 p-2 rounded-2xl">
+        <div className="posts w-full max-w-md bg-gray-900 p-2 rounded-2xl">
 
             <div className="flex items-center justify-between mb-2">
 
@@ -34,7 +42,7 @@ const post = ({ user, post, handleLikePost, handleUnlikePost, handleSavePost, ha
 
             </div>
 
-            <img className="rounded-md" src={post.imgUrl} alt={"Post image"} />
+            <img className="rounded-md w-full h-80 object-cover" src={post.imgUrl} alt={"Post image"} />
             <div className="flex items-center justify-between gap-4 ">
                 <div className="flex gap-4 py-2">
                     <button
@@ -53,8 +61,19 @@ const post = ({ user, post, handleLikePost, handleUnlikePost, handleSavePost, ha
                 </div>
             </div>
 
-            <div className="caption">
-                <p>{post.caption}</p>
+            <div className="caption mt-2">
+                <p className="text-white text-sm">
+                    {displayCaption}
+                    {isCaptionLong && !isExpanded && '...'}
+                </p>
+                {isCaptionLong && (
+                    <button 
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="text-gray-400 text-xs hover:text-white mt-1 transition"
+                    >
+                        {isExpanded ? 'Read less' : 'Read more'}
+                    </button>
+                )}
             </div>
 
         </div>
