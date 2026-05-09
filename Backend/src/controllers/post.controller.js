@@ -13,9 +13,21 @@ const imageKit = new ImageKit({
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
 });
 
+// maximum bio length enforced server-side
+const BIO_MAX = 50;
+
+// maximum caption word count enforced server-side
+const CAPTION_WORD_MAX = 100;
+
 //create post controller
 async function createPostController(req, res) {
   const userId = req.user.id;
+
+  if (!req.file) {
+    return res.status(400).json({
+      message: "Image is not there",
+    });
+  }
 
   //upload image to imagekit and get the url of the uploaded image
   const file = await imageKit.files.upload({
@@ -27,9 +39,16 @@ async function createPostController(req, res) {
     folder: "insta-clone-posts",
   });
 
+  // Truncate caption to maximum word limit
+  let caption = req.body.caption || '';
+  const words = caption.trim().split(/\s+/).filter(w => w.length > 0);
+  if (words.length > CAPTION_WORD_MAX) {
+    caption = words.slice(0, CAPTION_WORD_MAX).join(' ');
+  }
+
   //create post in database with caption, image url and user id from token
   const post = await postModel.create({
-    caption: req.body.caption,
+    caption: caption,
     imgUrl: file.url,
     userId,
   });
@@ -294,6 +313,9 @@ async function editProfileController(req, res) {
     });
   }
 
+  // prepare bio (truncate to limit if provided)
+  const incomingBio = req.body.bio !== undefined ? String(req.body.bio).slice(0, BIO_MAX) : undefined;
+
   // If a new profile image is provided, handle upload and remove old image
   if (req.file) {
     if (user.profileImageFileId) {
@@ -311,7 +333,7 @@ async function editProfileController(req, res) {
       {
         profileImage: file.url,
         profileImageFileId: file.fileId,
-        bio: req.body.bio !== undefined ? req.body.bio : user.bio,
+        bio: incomingBio !== undefined ? incomingBio : user.bio,
       },
       {
         returnDocument: "after",
@@ -321,7 +343,7 @@ async function editProfileController(req, res) {
     // only bio update
     user = await userModel.findByIdAndUpdate(
       userId,
-      { bio: req.body.bio },
+      { bio: incomingBio },
       { returnDocument: "after" }
     );
   } else {
