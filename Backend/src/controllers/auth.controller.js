@@ -120,6 +120,15 @@ async function loginController(req, res) {
   });
 }
 
+async function logoutController(req, res){
+
+  res.clearCookie("token");
+
+  res.status(200).json({
+    message: "User logged out successfully"
+  })
+}
+
 //get me controller
 async function getMeController(req, res){
   const userId = req.user.id
@@ -157,5 +166,6 @@ async function getMeController(req, res){
 module.exports = {
   registerController,
   loginController,
-  getMeController
+  getMeController,
+  logoutController
 };
