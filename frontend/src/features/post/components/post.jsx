@@ -19,7 +19,7 @@ const post = ({ user, post, handleLikePost, handleUnlikePost, handleSavePost, ha
     const displayCaption = isExpanded ? post.caption : post.caption?.slice(0, CAPTION_LIMIT);
 
     return (
-        <div className="posts w-full max-w-md bg-gray-900 p-2 rounded-2xl">
+        <div className="posts w-full bg-gray-900 p-2 rounded-2xl">
 
             <div className="flex items-center justify-between mb-2">
 

@@ -8,6 +8,7 @@ html{
     background-color: #1d1d1d;
     color: rgb(250, 245, 245);
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    scroll-behavior: smooth;
 }
 
 /* Hide scrollbars globally (works as a CSS fallback without plugin) */
@@ -18,4 +19,10 @@ html, body, #root {
 
 html::-webkit-scrollbar, body::-webkit-scrollbar, #root::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
 }

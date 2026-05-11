@@ -4,6 +4,7 @@ import { usePost } from "../hook/usePost.js";
 import FooterNav from "../../shared/FooterNav.jsx";
 import { useNavigate } from "react-router-dom";
 import ProfileMenu from "../components/ProfileMenu.jsx";
+import MotionSection from "../../shared/MotionSection.jsx";
 
 const Profile = () => {
   const { user, handleLogout } = useAuth();
@@ -39,10 +40,10 @@ const Profile = () => {
   }
 
   return (
-    <main className="min-h-screen w-full max-w-107.5 mx-auto bg-black text-white p-4 mb-20">
+    <main className="min-h-screen w-full max-w-107.5 mx-auto bg-black text-white p-4 mb-15">
 
       {/* Top Profile Section */}
-      <div className="flex items-start justify-between gap-4">
+      <MotionSection className="flex items-start justify-between gap-4">
 
         {/* Left Side */}
         <div className="flex gap-4 flex-1">
@@ -117,10 +118,10 @@ const Profile = () => {
         <div className="self-start">
           <ProfileMenu handleLogout={handleLogout} />
         </div>
-      </div>
+      </MotionSection>
 
       {/* Posts Grid */}
-      <div className="mt-6 border-t border-gray-700 pt-4">
+      <MotionSection className="mt-6 border-t border-gray-700 pt-4" delay={0.1}>
         <div className="grid grid-cols-3 gap-2">
 
           {posts.map((post) => (
@@ -137,7 +138,7 @@ const Profile = () => {
           ))}
 
         </div>
-      </div>
+      </MotionSection>
 
       {/* Footer Navigation */}
       <FooterNav />

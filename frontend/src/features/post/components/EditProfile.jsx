@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { usePost } from "../hook/usePost.js";
 import { useNavigate } from "react-router-dom";
 import { RiArrowLeftFill } from "@remixicon/react";
+import MotionSection from "../../shared/MotionSection.jsx";
 
 const EditProfile = () => {
 
@@ -36,7 +37,7 @@ const EditProfile = () => {
 
     return (
         <main className="min-h-screen flex items-center justify-center bg-black">
-            <div className="w-full max-w-[420px] flex flex-col gap-4 px-4">
+            <MotionSection className="w-full max-w-107.5 flex flex-col gap-4 px-4">
                 <div className="w-full relative flex items-center justify-center">
                 <button
                     onClick={() => navigate("/Profile")}
@@ -86,7 +87,7 @@ const EditProfile = () => {
                     Save Changes 
                 </button>
             </form>
-        </div>
+        </MotionSection>
         </main>
     );
 };

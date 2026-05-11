@@ -1,6 +1,6 @@
 import React from 'react'
 {/* react router dom */ }
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 {/* importing the login and register page */ }
 import Login from './features/auth/pages/Login.jsx'
 import Register from './features/auth/pages/Register.jsx'
@@ -13,12 +13,14 @@ import Profile from './features/post/pages/Profile.jsx'
 import SavePost from './features/post/pages/SavePost.jsx'
 import EditProfile from './features/post/components/EditProfile.jsx'
 import ProtectedRoute from './features/auth/ProtectedRoute.jsx'
+import ScrollManager from './features/shared/ScrollManager.jsx'
 
 {/* main app component */ }
 const App = () => {
     return (
         <AuthProvider>
             <PostProvider>
+                <ScrollManager />
                 <Routes >
                     <Route path='/login' element={<Login />} />
                     <Route path='/register' element={<Register />} />

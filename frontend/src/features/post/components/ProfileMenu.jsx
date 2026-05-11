@@ -36,7 +36,7 @@ const ProfileMenu = ({ handleLogout }) => {
                 damping: 25,
                 stiffness: 200,
               }}
-              className="fixed bottom-0 left-1/2 w-full max-w-100.5 -translate-x-1/2 bg-zinc-900 rounded-t-3xl p-6 z-50 shadow-2xl"
+              className="fixed bottom-0 left-1/2 w-full max-w-107.5 -translate-x-1/2 bg-zinc-900 rounded-t-3xl p-6 z-50 shadow-2xl"
             >
               <div className="w-14 h-1 bg-zinc-600 rounded-full mx-auto mb-6"></div>
 

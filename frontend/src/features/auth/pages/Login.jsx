@@ -3,6 +3,7 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import {useAuth} from '../hook/useAuth.js'
+import MotionSection from '../../shared/MotionSection.jsx'
 
 const Login = () => {
 
@@ -29,9 +30,8 @@ if (loading) {
   )
 }
     return (
-        <main className='min-h-screen w-full flex items-center justify-center'>
-            
-            <div className='w-fit min-w-96 flex flex-col gap-6'>
+        <main className='min-h-screen w-full flex items-center justify-center bg-black'>
+            <MotionSection className='w-full max-w-107.5 px-4 flex flex-col gap-6'>
             
                 <h1 className='text-3xl font-bold '>Login</h1>
 
@@ -63,9 +63,9 @@ if (loading) {
                         type="submit">Login</button>
 
                     {/* link to navigate to register page */}
-                    <p>Don't have an account? <Link to="/register" className='text-red-500  '>Create Account</Link></p>
+                    <p>Don't have an account? <Link to="/register" className='text-red-500'>Create Account</Link></p>
                 </form>
-            </div>
+            </MotionSection>
         </main>
     )
 }

@@ -3,6 +3,7 @@ import { usePost } from '../hook/usePost.js'
 import FooterNav from '../../shared/FooterNav.jsx';
 import { useNavigate } from 'react-router-dom';
 import { RiArrowLeftFill } from "@remixicon/react";
+import MotionSection from '../../shared/MotionSection.jsx';
 
 
 const SavePost = () => {
@@ -32,8 +33,8 @@ const SavePost = () => {
 
 
     return (
-        <main className="min-h-screen max-w-[400px] w-full flex flex-col items-center justify-start mx-auto bg-black">
-            <div className="w-full relative flex items-center justify-center">
+        <main className="min-h-screen max-w-107.5 w-full flex flex-col items-center justify-start mx-auto bg-black px-4 pb-20">
+            <MotionSection className="w-full relative flex items-center justify-center">
                 <button
                     onClick={() => navigate("/Profile")}
                     className="text-2xl text-white absolute top-3 left-4"
@@ -42,9 +43,9 @@ const SavePost = () => {
                 </button>
 
                 <h1 className="text-white text-2xl font-bold text-center mt-2">Saved Posts</h1>
-            </div>
+            </MotionSection>
 
-            <div className="w-full max-w-[420px] flex flex-col gap-4 px-4 mt-4">
+            <div className="w-full flex flex-col gap-4 mt-4">
 
                 {/* Render saved posts here */}
                 <div className='grid grid-cols-3 gap-4'>
