@@ -12,6 +12,7 @@ import CreatePost from './features/post/pages/CreatePost.jsx'
 import Profile from './features/post/pages/Profile.jsx'
 import SavePost from './features/post/pages/SavePost.jsx'
 import EditProfile from './features/post/components/EditProfile.jsx'
+import ProtectedRoute from './features/auth/ProtectedRoute.jsx'
 
 {/* main app component */ }
 const App = () => {
@@ -19,13 +20,13 @@ const App = () => {
         <AuthProvider>
             <PostProvider>
                 <Routes >
-                    <Route path='/' element={<Feed />} />
                     <Route path='/login' element={<Login />} />
                     <Route path='/register' element={<Register />} />
-                    <Route path='/create-post' element={<CreatePost/>}/>
-                    <Route path='/profile'element={<Profile/>} />
-                    <Route path='/saved-posts' element={<SavePost/>} />
-                    <Route path='/editProfile' element={<EditProfile/>} />
+                    <Route path='/' element={<ProtectedRoute><Feed /></ProtectedRoute>} />
+                    <Route path='/create-post' element={<ProtectedRoute><CreatePost/></ProtectedRoute>}/>
+                    <Route path='/profile' element={<ProtectedRoute><Profile/></ProtectedRoute>} />
+                    <Route path='/saved-posts' element={<ProtectedRoute><SavePost/></ProtectedRoute>} />
+                    <Route path='/editProfile' element={<ProtectedRoute><EditProfile/></ProtectedRoute>} />
                 </Routes>
             </PostProvider>
         </AuthProvider>

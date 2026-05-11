@@ -44,3 +44,13 @@ export const getMe = async ()=>{
         throw err
     }
 }
+
+{/* function to logout a user */}
+export const logout = async ()=>{
+    try{
+        const response = await api.post("/logout")
+        return response.data
+    }catch(err){
+        throw err
+    }
+}

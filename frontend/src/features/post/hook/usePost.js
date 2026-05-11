@@ -2,6 +2,8 @@ import { getFeed, createPost, getMyPost, likePost, unlikePost, savePost, unSaveP
 import { useCallback, useContext } from "react";
 import { AuthContext } from "../../auth/auth.context.jsx";
 import { PostContext } from "../post.context.jsx";
+import { useNavigate } from "react-router-dom";
+
 
 export const usePost = () => {
   const context = useContext(PostContext);
@@ -94,7 +96,7 @@ export const usePost = () => {
     setLoading(true);
     try {
       const response = await getMyPost();
-      setFeed(response.posts);
+      setFeed(response.posts.reverse());
       return response;
     } catch (error) {
       console.error("Failed to fetch user posts:", error);
@@ -134,6 +136,7 @@ export const usePost = () => {
       setLoading(false);
     }   
   }, [setLoading, setUser]);
+
 
 
   return {

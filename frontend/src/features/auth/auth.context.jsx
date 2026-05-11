@@ -6,7 +6,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children})=>{
 
     const [user, setUser] = useState(null)
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const loadUser = async () => {
@@ -15,6 +15,8 @@ export const AuthProvider = ({children})=>{
                 setUser(response.user);
             } catch (error) {
                 setUser(null);
+            } finally {
+                setLoading(false)
             }
         }
 
