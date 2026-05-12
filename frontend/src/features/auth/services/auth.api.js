@@ -54,3 +54,12 @@ export const logout = async ()=>{
         throw err
     }
 }
+
+export const checkUsername = async (username)=>{
+    try{
+        const response = await api.get(`/checkUsername/${username}`)
+        return response.data
+    }catch(err){
+        throw err
+    }
+}

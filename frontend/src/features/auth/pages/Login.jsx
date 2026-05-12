@@ -1,25 +1,38 @@
 import React from 'react'
-{/* react router dom link for navigation between login and register page */ }
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import {useAuth} from '../hook/useAuth.js'
+import { useAuth } from '../hook/useAuth.js'
 import MotionSection from '../../shared/MotionSection.jsx'
 
 const Login = () => {
 
-    const {user, loading, handleLogin} = useAuth()
+    const { loading, handleLogin } = useAuth()
 
-    {/* state for username and password */ }
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
+    const [error, setError] = useState('')
     const navigate = useNavigate();
 
-    {/* function to handle form submission */ }
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-            await handleLogin(username, password)
+        setError('')
+
+        if (!username.trim() || !password.trim()) {
+            setError('Please enter username and password')
+            return
+        }
+
+        try {
+            await handleLogin(username.trim(), password)
             navigate('/')
+        } catch (err) {
+            setError(
+                err?.response?.data?.message ||
+                'Login failed. Please check credentials and try again.'
+            )
+        }
     }
 
 if (loading) {
@@ -35,7 +48,6 @@ if (loading) {
             
                 <h1 className='text-3xl font-bold '>Login</h1>
 
-           
                 {/* form */}
                 <form className='flex flex-col gap-4' onSubmit={handleSubmit}   >
 
@@ -44,18 +56,63 @@ if (loading) {
                         className='w-full px-6 py-3 rounded-full bg-gray-100 text-gray-700 outline-none placeholder-gray-500'
                         type="text"
                         name="username"
-                        onInput={(e) => setUsername(e.target.value)}
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                         placeholder='Enter username'
                     />
 
                     {/* input for password */}
-                    <input
-                        className='w-full px-6 py-3 rounded-full bg-gray-100 text-gray-700 outline-none placeholder-gray-500'
-                        type="password"
-                        name="password"
-                        onInput={(e) => setPassword(e.target.value)}
-                        placeholder='Enter password'
-                    />
+                    <div className='relative w-full'>
+                        <input
+                            className='w-full px-6 py-3 pr-14 rounded-full bg-gray-100 text-gray-700 outline-none placeholder-gray-500'
+                            type={showPassword ? 'text' : 'password'}
+                            name="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder='Enter password'
+                        />
+
+                        <button
+                            type='button'
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            className='absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700'
+                            aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        >
+                            {showPassword ? (
+                                <svg
+                                    xmlns='http://www.w3.org/2000/svg'
+                                    viewBox='0 0 24 24'
+                                    fill='none'
+                                    stroke='currentColor'
+                                    strokeWidth='2'
+                                    className='w-5 h-5'
+                                >
+                                    <path d='M3 3l18 18' />
+                                    <path d='M10.58 10.58a2 2 0 102.83 2.83' />
+                                    <path d='M9.88 5.09A9.77 9.77 0 0112 5c5 0 9.27 3.11 11 7-0.81 1.81-2.17 3.36-3.88 4.5' />
+                                    <path d='M6.61 6.61C4.62 7.87 3.1 9.76 2 12c1.73 3.89 6 7 10 7 1.61 0 3.16-.4 4.53-1.12' />
+                                </svg>
+                            ) : (
+                                <svg
+                                    xmlns='http://www.w3.org/2000/svg'
+                                    viewBox='0 0 24 24'
+                                    fill='none'
+                                    stroke='currentColor'
+                                    strokeWidth='2'
+                                    className='w-5 h-5'
+                                >
+                                    <path d='M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z' />
+                                    <circle cx='12' cy='12' r='3' />
+                                </svg>
+                            )}
+                        </button>
+                    </div>
+
+                    {error && (
+                        <p className='text-sm text-red-400 font-medium' role='alert'>
+                            {error}
+                        </p>
+                    )}
 
                     {/* button to submit the form */}
                     <button
