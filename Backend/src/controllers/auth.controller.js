@@ -10,6 +10,28 @@ async function registerController(req, res) {
   //get the data from request body
   const { username, email, password, bio, profileImage } = req.body;
 
+  // USERNAME VALIDATION
+  const usernameRegex =/^(?=.{3,20}$)[a-zA-Z][a-zA-Z0-9_]*$/;
+
+  if (!usernameRegex.test(username)) {
+
+  return res.status(400).json({
+    message:
+      "Username must be 3-20 chars, start with letter and only letters, numbers, underscore allowed",
+  });
+  }
+
+  // PASSWORD VALIDATION
+  const passwordRegex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        message:
+          "Password must contain uppercase, lowercase, number, special character and be at least 8 characters long",
+      });
+    }
+
+
   //check if user with the same username or email already exists in database
   const isUserAlreadyExist = await userModel.findOne({
     $or: [{ username }, { email }],
@@ -162,10 +184,38 @@ async function getMeController(req, res){
   })
 }
 
+async function checkUsernameController(req, res){
+
+  const username = req.params.username;
+
+   if (!username) {
+      return res.status(400).json({
+        available: false,
+        message: "Username is required",
+      });
+    }
+
+  const user = await userModel.findOne({username});
+
+  if(user){
+    return res.status(200).json({
+      available: false,
+      message: "Username is already taken",
+    })
+  }
+
+  res.status(200).json({
+    available: true,
+    message: "Username is available",
+  })
+
+}
+
 //export the controllers
 module.exports = {
   registerController,
   loginController,
   getMeController,
-  logoutController
+  logoutController,
+  checkUsernameController
 };

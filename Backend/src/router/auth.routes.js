@@ -19,11 +19,16 @@ authRouter.post("/login", authController.loginController)
 // @route POST /api/auth/logout
 // @desc logout a user
 // @access public
-authRouter.post("/logout", authController.logoutController)
+authRouter.post("/logout", identifyUser, authController.logoutController)
 
 //@route GET /api/auth/get-me
 //@desc get current user
 //@access public
 authRouter.get("/get-me", identifyUser, authController.getMeController)
+
+// @route GET /api/auth/checkUsername/:username
+// @desc check if username is available
+// @access public (no auth required - users check availability before registering)
+authRouter.get("/checkUsername/:username", authController.checkUsernameController)
 
 module.exports = authRouter;

@@ -7,6 +7,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "username is required"],
     unique: [true, "username must be unique"],
+    minlength: 3,
+    maxlength: 20,
+    match: [/^[a-zA-Z0-9_]+$/,
+      "Username can only contain letters, numbers and underscore",],
   },
 
   //email is required for creating a user and it must be unique because email is used for login and it is also used for displaying the email in the frontend
@@ -39,8 +43,7 @@ const userSchema = new mongoose.Schema({
   profileImageFileId: {
     type: String,
     default: "",
-  }
-
+  },
 });
 
 //user model
