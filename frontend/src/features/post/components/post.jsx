@@ -86,7 +86,7 @@ const post = ({ user, post, handleLikePost, handleUnlikePost, handleSavePost, ha
             </div>
 
             {/* Post image with double-click like functionality and heart animation */}
-            <div className="relative rounded-lg w-full h-96 overflow-hidden">
+            <div className="relative rounded-lg w-full h-full overflow-hidden">
                 <img
                     onDoubleClick={handleDoubleClick}
                     className="w-full h-full object-cover"
