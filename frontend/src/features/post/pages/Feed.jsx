@@ -20,10 +20,10 @@ const Feed = () => {
     }
 
     return (
-        <main className="bg-black min-h-screen overflow-auto scrollbar-hide">
-            <div className="feed w-full max-w-107.5 mx-auto px-4 pb-20 flex justify-center items-start">
+        <main className="bg-black min-h-screen w-screen overflow-auto scrollbar-hide">
+            <div className="feed w-full max-w-107.5 mx-auto px-3 pb-24 flex justify-center items-start">
 
-                <div className="post w-full flex flex-col gap-2">
+                <div className="post w-full flex flex-col gap-3">
 
                     <Nav/>
                     {feed.map((post) => (

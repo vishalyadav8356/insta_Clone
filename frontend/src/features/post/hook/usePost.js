@@ -1,4 +1,4 @@
-import { getFeed, createPost, getMyPost, likePost, unlikePost, savePost, unSavePost, showSavedPosts, editProfile} from "../services/post.api.js";
+import { getFeed, createPost, getMyPost, likePost, unlikePost, savePost, unSavePost, showSavedPosts, editProfile, deletePost} from "../services/post.api.js";
 import { useCallback, useContext } from "react";
 import { AuthContext } from "../../auth/auth.context.jsx";
 import { PostContext } from "../post.context.jsx";
@@ -42,7 +42,7 @@ export const usePost = () => {
 
       setFeed((prev) =>
         prev.map((post) =>
-          post._id === postId ? { ...post, isLiked: true } : post,
+          post._id === postId ? { ...post, isLiked: true, likeCount: (post.likeCount || 0) + 1 } : post,
         ),
       );
     } catch (error) {
@@ -56,7 +56,7 @@ export const usePost = () => {
 
       setFeed((prev) =>
         prev.map((post) =>
-          post._id === postId ? { ...post, isLiked: false } : post,
+          post._id === postId ? { ...post, isLiked: false, likeCount: Math.max((post.likeCount || 1) - 1, 0) } : post,
         ),
       );
     } catch (error) {
@@ -137,7 +137,28 @@ export const usePost = () => {
     }   
   }, [setLoading, setUser]);
 
+  const handleDeletePost = useCallback(async (postId) => {
+    try {
+      await deletePost(postId);
+      setFeed((prev) => prev.filter((post) => post._id !== postId));
+    } catch (error) {
+      console.error("Failed to delete post:", error);
+      throw error;
+    }
+  }, [setFeed]);
 
+  const handleGetPostDetails = useCallback(async (postId) => {
+    setLoading(true);
+    try {
+      const response = await getPostDetails(postId);
+      return response.post;
+    } catch (error) {
+      console.error("Failed to fetch post details:", error);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, [setLoading]);
 
   return {
     loading,
@@ -151,6 +172,8 @@ export const usePost = () => {
     handleUnsavePost,
     handleGetPost,
     handleShowSavedPosts,
-    handleEditProfile
+    handleEditProfile,
+    handleDeletePost,
+    handleGetPostDetails
   };
 };

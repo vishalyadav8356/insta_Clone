@@ -5,12 +5,16 @@ import FooterNav from "../../shared/FooterNav.jsx";
 import { useNavigate } from "react-router-dom";
 import ProfileMenu from "../components/ProfileMenu.jsx";
 import MotionSection from "../../shared/MotionSection.jsx";
+import PostDetailModal from "../components/PostDetailModal.jsx";
+
 
 const Profile = () => {
-  const { user, handleLogout } = useAuth();
-  const { handleGetPost, loading, handleShowSavedPosts } = usePost();
+  const { user, handleLogout, setUser } = useAuth();
+  const { handleGetPost, loading, handleShowSavedPosts, handleLikePost, handleUnlikePost, handleSavePost, handleUnsavePost, handleDeletePost, feed } = usePost();
 
   const [posts, setPosts] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -30,6 +34,88 @@ const Profile = () => {
     await handleShowSavedPosts();
     navigate("/saved-posts");
   };
+
+  const handleOpenModal = (post) => {
+    setSelectedPost(post);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedPost(null);
+  };
+
+  const handleLike = async (postId) => {
+    if (!selectedPost) return;
+
+    const nextIsLiked = !selectedPost.isLiked;
+
+    if (selectedPost.isLiked) {
+      await handleUnlikePost(postId);
+    } else {
+      await handleLikePost(postId);
+    }
+
+    setSelectedPost((prev) =>
+      prev
+        ? {
+            ...prev,
+            isLiked: nextIsLiked,
+            likeCount: Math.max((prev.likeCount || 0) + (prev.isLiked ? -1 : 1), 0),
+          }
+        : prev,
+    );
+
+    setPosts((prev) =>
+      prev.map((p) =>
+        p._id === postId
+          ? {
+              ...p,
+              isLiked: nextIsLiked,
+              likeCount: Math.max((p.likeCount || 0) + (selectedPost.isLiked ? -1 : 1), 0),
+            }
+          : p,
+      ),
+    );
+  };
+
+  const handleSave = async (postId) => {
+    if (!selectedPost) return;
+
+    const nextIsSaved = !selectedPost.isSaved;
+
+    if (selectedPost.isSaved) {
+      await handleUnsavePost(postId);
+    } else {
+      await handleSavePost(postId);
+    }
+
+    setSelectedPost((prev) => (prev ? { ...prev, isSaved: nextIsSaved } : prev));
+
+    setPosts((prev) =>
+      prev.map((p) => (p._id === postId ? { ...p, isSaved: nextIsSaved } : p)),
+    );
+  };
+
+  const handleDelete = async (postId) => {
+    try {
+      await handleDeletePost(postId);
+      setPosts((prev) => prev.filter((p) => p._id !== postId));
+      
+      // Update user post count
+      if (user) {
+        setUser({
+          ...user,
+          postsCount: Math.max((user.postsCount || 1) - 1, 0),
+        });
+      }
+      
+      handleCloseModal();
+    } catch (err) {
+      console.error("Failed to delete post:", err);
+    }
+  };
+
 
   if (loading) {
     return (
@@ -127,7 +213,8 @@ const Profile = () => {
           {posts.map((post) => (
             <div
               key={post._id}
-              className="w-full h-52 bg-gray-300 rounded-md overflow-hidden"
+              className="w-full h-52 bg-gray-300 rounded-md overflow-hidden cursor-pointer hover:opacity-80 transition"
+              onClick={() => handleOpenModal(post)}
             >
               <img
                 src={post.imgUrl}
@@ -139,6 +226,16 @@ const Profile = () => {
 
         </div>
       </MotionSection>
+
+      {/* Post Detail Modal */}
+      <PostDetailModal
+        postId={selectedPost?._id}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onLike={handleLike}
+        onSave={handleSave}
+        onDelete={handleDelete}
+      />
 
       {/* Footer Navigation */}
       <FooterNav />

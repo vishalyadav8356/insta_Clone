@@ -44,8 +44,18 @@ export async function getMyPost() {
   return response.data;
 }
 
+export async function getPostDetails(postId) {
+  const response = await api.get("/details/" + postId);
+  return response.data;
+}
+
 export async function showSavedPosts() {
   const response = await api.get("/savedPosts");
+  return response.data;
+}
+
+export async function deletePost(postId) {
+  const response = await api.delete("/postDelete/" + postId);
   return response.data;
 }
 
