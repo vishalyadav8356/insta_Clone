@@ -50,6 +50,7 @@ async function createPostController(req, res) {
   const post = await postModel.create({
     caption: caption,
     imgUrl: file.url,
+    imgFileId: file.fileId,
     userId,
   });
 
@@ -82,31 +83,40 @@ async function getPostDetailsController(req, res) {
   const userId = req.user.id;
   const postId = req.params.postId;
 
-  //find post in database using post id and check if the user id of the post is same as the user id from token if not return unauthorized access else return the post details in response
-  const post = await postModel.findById(postId);
+  // find post in database and populate author
+  const postDoc = await postModel.findById(postId).populate("userId");
 
-  //if post is not found return not found error
-  if (!post) {
+  // if post is not found return not found error
+  if (!postDoc) {
     return res.status(404).json({
       message: "post not found",
     });
   }
 
-  //check if the user id of the post is same as the user id from token if not return unauthorized access else return the post details in response
-  const isValidUser = post.userId.toString() === userId;
+  try {
+    // compute like count for this post
+    const likeCount = await likeModel.countDocuments({ post: postId });
 
-  //if user id of the post is not same as the user id from token return unauthorized access
-  if (!isValidUser) {
-    return res.status(403).json({
-      message: "you are not authorized to view this post",
+    // whether current user liked this post
+    const isLiked = !!(await likeModel.findOne({ post: postId, user: req.user.username }));
+
+    // whether current user saved this post
+    const isSaved = !!(await savedPostModel.findOne({ post: postId, user: req.user.username }));
+
+    // return post object with extra flags
+    const post = postDoc.toObject();
+    post.likeCount = likeCount;
+    post.isLiked = isLiked;
+    post.isSaved = isSaved;
+
+    return res.status(200).json({
+      message: "post details fetched successfully",
+      post,
     });
+  } catch (err) {
+    console.error("getPostDetailsController error:", err);
+    return res.status(500).json({ message: "failed to fetch post details" });
   }
-
-  //return success response with post details
-  res.status(200).json({
-    message: "post details fetched successfully",
-    post,
-  });
 }
 
 //like post controller
@@ -121,16 +131,25 @@ async function likePostController(req, res) {
       message: "post not found",
     });
   }
+  try {
+    const like = await likeModel.create({
+      post: postId,
+      user: username,
+    });
 
-  const like = await likeModel.create({
-    post: postId,
-    user: username,
-  });
+    return res.status(200).json({
+      message: "post liked successfully",
+      like,
+    });
+  } catch (err) {
+    // duplicate like (unique index) — treat as idempotent
+    if (err && err.code === 11000) {
+      return res.status(200).json({ message: "post already liked" });
+    }
 
-  res.status(200).json({
-    message: "post liked successfully",
-    like,
-  });
+    console.error("likePostController error:", err);
+    return res.status(500).json({ message: "failed to like post" });
+  }
 }
 
 //unlike post controller
@@ -162,6 +181,7 @@ async function getFeedController(req, res) {
 
   const posts = await postModel.find().populate("userId").lean();
 
+  // get likes and saved posts for current user to mark isLiked/isSaved
   const likePosts = await likeModel.find({
     user: req.user.username,
   });
@@ -173,10 +193,23 @@ async function getFeedController(req, res) {
   const likePostIds = likePosts.map((like) => like.post.toString());
   const savedPostIds = savedPosts.map((savedPost) => savedPost.post.toString());
 
+  // compute like counts for all posts in one query
+  const postIds = posts.map((p) => p._id);
+  const likesForPosts = await likeModel.aggregate([
+    { $match: { post: { $in: postIds } } },
+    { $group: { _id: "$post", count: { $sum: 1 } } },
+  ]);
+
+  const likeCountMap = likesForPosts.reduce((acc, cur) => {
+    acc[cur._id.toString()] = cur.count;
+    return acc;
+  }, {});
+
   const feed = posts.map((post) => ({
     ...post,
     isLiked: likePostIds.includes(post._id.toString()),
     isSaved: savedPostIds.includes(post._id.toString()),
+    likeCount: likeCountMap[post._id.toString()] || 0,
   }));
 
   res.status(200).json({
@@ -270,6 +303,16 @@ async function deletePostController(req, res) {
     });
   }
 
+  // delete image from ImageKit if we have its fileId
+  if (deletedPost.imgFileId) {
+    try {
+      await imageKit.files.delete(deletedPost.imgFileId);
+    } catch (err) {
+      // log and continue — do not block post deletion on image deletion failure
+      console.error("Failed to delete ImageKit file:", err);
+    }
+  }
+
   res.status(200).json({
     message: "post deleted successfully",
     deletedPost,
@@ -325,7 +368,7 @@ async function editProfileController(req, res) {
     const file = await imageKit.files.upload({
       file: await toFile(Buffer.from(req.file.buffer), "file"),
       fileName: `${Date.now()}-profile.jpg`,
-      folder: "/insta-clone-profile",
+      folder: "/insta-clone-posts",
     });
 
     user = await userModel.findByIdAndUpdate(
