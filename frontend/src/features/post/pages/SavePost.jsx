@@ -1,15 +1,18 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { usePost } from '../hook/usePost.js'
 import FooterNav from '../../shared/FooterNav.jsx';
 import { useNavigate } from 'react-router-dom';
 import { RiArrowLeftFill } from "@remixicon/react";
 import MotionSection from '../../shared/MotionSection.jsx';
+import PostDetailModal from '../components/PostDetailModal.jsx'
 
 
 const SavePost = () => {
 
-    const { handleShowSavedPosts, loading, feed } = usePost();
+    const { handleShowSavedPosts, loading, feed, handleLikePost, handleUnlikePost, handleSavePost, handleUnsavePost, handleDeletePost } = usePost();
     const navigate = useNavigate();
+    const [selectedPost, setSelectedPost] = useState(null)
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
     useEffect(() => {
         let mounted = true;
@@ -22,6 +25,62 @@ const SavePost = () => {
         return () => { mounted = false };
     }, [handleShowSavedPosts])
 
+    const handleOpenModal = (post) => {
+        setSelectedPost(post)
+        setIsModalOpen(true)
+    }
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false)
+        setSelectedPost(null)
+    }
+
+    const handleModalLike = async (postId) => {
+        if (!selectedPost) return
+
+        const nextIsLiked = !selectedPost.isLiked
+
+        if (selectedPost.isLiked) {
+            await handleUnlikePost(postId)
+        } else {
+            await handleLikePost(postId)
+        }
+
+        setSelectedPost((prev) =>
+            prev
+                ? {
+                    ...prev,
+                    isLiked: nextIsLiked,
+                    likeCount: Math.max((prev.likeCount || 0) + (nextIsLiked ? 1 : -1), 0),
+                }
+                : prev,
+        )
+    }
+
+    const handleModalSave = async (postId) => {
+        if (!selectedPost) return
+
+        const nextIsSaved = !selectedPost.isSaved
+
+        if (selectedPost.isSaved) {
+            await handleUnsavePost(postId)
+        } else {
+            await handleSavePost(postId)
+        }
+
+        setSelectedPost((prev) => (prev ? { ...prev, isSaved: nextIsSaved } : prev))
+    }
+
+    const handleModalDelete = async (postId) => {
+        try {
+            await handleDeletePost(postId)
+            // refresh saved list
+            await handleShowSavedPosts()
+            handleCloseModal()
+        } catch (err) {
+            console.error('Failed to delete post from modal:', err)
+        }
+    }
 
     if (loading) {
         return (
@@ -51,7 +110,7 @@ const SavePost = () => {
                 <div className='grid grid-cols-3 gap-4'>
                     {feed && feed.length > 0 ? (
                         feed.map((post) => (
-                            <div key={post._id || post.id} className=" rounded-lg overflow-hidden">
+                            <div key={post._id || post.id} className=" rounded-lg overflow-hidden cursor-pointer" onClick={() => handleOpenModal(post)}>
 
                                 <img src={post.imgUrl || post.image} alt={post.caption || ''} className=" w-full h-40 object-cover" />
 
@@ -63,6 +122,15 @@ const SavePost = () => {
                         </div>
                     )}
                 </div>
+
+                <PostDetailModal
+                    postId={selectedPost?._id}
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                    onLike={handleModalLike}
+                    onSave={handleModalSave}
+                    onDelete={handleModalDelete}
+                />
 
                 <FooterNav />
             </div>

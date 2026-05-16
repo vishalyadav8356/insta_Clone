@@ -29,12 +29,22 @@ export const usePost = () => {
     try {
       const data = await createPost(caption, imageFile);
       setFeed([data.post, ...feed]);
+      // increment the authenticated user's post count
+      try {
+        setUser((prev) => ({
+          ...prev,
+          postsCount: (prev?.postsCount || 0) + 1,
+        }));
+      } catch (e) {
+        // defensive: if setUser isn't available or fails, don't break the flow
+        console.warn('Could not update user postsCount:', e);
+      }
     } catch (error) {
       console.error("Failed to create post:", error);
     } finally {
       setLoading(false);
     }
-  }, [setLoading, setFeed, feed]);
+  }, [setLoading, setFeed, feed, setUser]);
 
   const handleLikePost = useCallback(async (postId) => {
     try {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-    RiArrowLeftLine,
+    RiArrowLeftFill,
     RiHeart3Line,
     RiHeart3Fill,
     RiChat3Line,
@@ -80,7 +80,7 @@ const PostDetailModal = ({ postId, isOpen, onClose, onLike, onSave, onDelete }) 
                     {/* LEFT */}
                     <div className="flex items-center gap-4">
                         <button type="button" onClick={onClose} className="text-white text-[28px]">
-                            <RiArrowLeftLine />
+                             <RiArrowLeftFill />
                         </button>
 
                         <h2 className="text-white text-2xl font-semibold">Posts</h2>
