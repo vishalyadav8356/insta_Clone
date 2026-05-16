@@ -29,10 +29,5 @@ userRouter.post("/follow/:username/reject", identifyUser, userController.rejectF
 // @access private  
 userRouter.post("/unfollow/:username", identifyUser, userController.unfollowUserController)
 
-// @route GET /api/users/search
-// @desc search users by username
-// @access private
-// userRouter.get("/search", identifyUser, userController.searchUsersController)
-
 
 module.exports = userRouter
