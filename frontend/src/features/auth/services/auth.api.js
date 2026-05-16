@@ -54,6 +54,7 @@ export const logout = async ()=>{
     }
 }
 
+{/* function to check if the username is already taken or not */}
 export const checkUsername = async (username)=>{
     try{
         const response = await api.get(`/checkUsername/${username}`)

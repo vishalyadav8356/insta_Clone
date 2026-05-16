@@ -72,3 +72,5 @@ export async function editProfile(bio, profileImage) {
   const response = await api.post("/editProfile", formData);
   return response.data;
 }
+
+
